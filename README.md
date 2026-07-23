@@ -5,8 +5,8 @@
 
   **Sitio web oficial de la escuela de Muay Thai Alto Impacto Chile (Santiago de Chile).**
 
-  [Instagram @alto_impacto_chile](https://www.instagram.com/alto_impacto_chile) ·
-  [Ver el sitio](#-cómo-ver-el-sitio)
+  [🌐 Ver el sitio en vivo](https://b3njjaman.github.io/alto-impacto-chile/) ·
+  [Instagram @alto_impacto_chile](https://www.instagram.com/alto_impacto_chile)
 </div>
 
 ---
