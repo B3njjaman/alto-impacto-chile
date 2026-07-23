@@ -16,9 +16,11 @@
   --gris: #9a99a1;
   --borde: #26262e;
 
-  --fuente-display: "Anton", "Arial Narrow", sans-serif;
-  --fuente-condensada: "Barlow Condensed", "Arial Narrow", sans-serif;
-  --fuente-texto: "Barlow", "Segoe UI", sans-serif;
+  /* Trío tailandés (Cadson Demak): Kanit para titulares, Chakra Petch
+     para etiquetas y botones, Prompt para lectura. */
+  --fuente-display: "Kanit", "Arial Narrow", sans-serif;
+  --fuente-condensada: "Chakra Petch", "Arial Narrow", sans-serif;
+  --fuente-texto: "Prompt", "Segoe UI", sans-serif;
 
   --ancho: 1120px;
   --radio: 10px;
@@ -32,8 +34,8 @@ body {
   background: var(--negro);
   color: var(--hueso);
   font-family: var(--fuente-texto);
-  font-size: 1.0625rem;
-  line-height: 1.65;
+  font-size: 1rem;
+  line-height: 1.7;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -64,18 +66,18 @@ a { color: inherit; }
 
 h1, h2, h3 {
   font-family: var(--fuente-display);
-  font-weight: 400;
+  font-weight: 800;
   text-transform: uppercase;
-  line-height: 1.02;
-  letter-spacing: 0.01em;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
 }
 
 .eyebrow {
   font-family: var(--fuente-condensada);
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.22em;
-  font-size: 0.85rem;
+  letter-spacing: 0.24em;
+  font-size: 0.78rem;
   color: var(--oro);
   display: flex;
   align-items: center;
@@ -96,8 +98,8 @@ h1, h2, h3 {
   font-family: var(--fuente-condensada);
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
-  font-size: 0.95rem;
+  letter-spacing: 0.14em;
+  font-size: 0.86rem;
   text-decoration: none;
   padding: 0.8rem 1.7rem;
   border: 1px solid transparent;
@@ -145,8 +147,8 @@ h1, h2, h3 {
   font-family: var(--fuente-condensada);
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-size: 1rem;
+  letter-spacing: 0.06em;
+  font-size: 0.95rem;
 }
 .marca-texto em {
   font-style: normal;
@@ -164,7 +166,7 @@ h1, h2, h3 {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  font-size: 0.92rem;
+  font-size: 0.84rem;
   text-decoration: none;
   color: var(--gris);
   padding: 0.5rem 0.8rem;
@@ -222,16 +224,21 @@ h1, h2, h3 {
 }
 
 .heroe h1 {
-  font-size: clamp(3rem, 9vw, 6.5rem);
-  max-width: 11ch;
+  font-size: clamp(2.7rem, 7.5vw, 5.4rem);
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: -0.02em;
+  max-width: 12ch;
   margin: 1.2rem 0 1.4rem;
+  padding-right: 0.08em; /* la cursiva no se corta en el borde */
 }
 .heroe h1 .acento { color: var(--rojo-vivo); }
 
 .heroe p {
-  max-width: 46ch;
+  max-width: 48ch;
   color: var(--gris);
-  font-size: 1.15rem;
+  font-size: 1.06rem;
+  font-weight: 300;
   margin-bottom: 2.2rem;
 }
 
@@ -257,9 +264,11 @@ h1, h2, h3 {
 }
 .marquee span {
   font-family: var(--fuente-display);
+  font-weight: 900;
+  font-style: italic;
   text-transform: uppercase;
-  font-size: 1.6rem;
-  letter-spacing: 0.06em;
+  font-size: 1.45rem;
+  letter-spacing: 0.04em;
   color: transparent;
   -webkit-text-stroke: 1px var(--gris);
   padding: 0 0.6rem;
@@ -290,12 +299,12 @@ h1, h2, h3 {
 }
 
 .seccion h2 {
-  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-size: clamp(1.7rem, 4vw, 2.8rem);
   margin: 1rem 0 1rem;
-  max-width: 20ch;
+  max-width: 22ch;
 }
 
-.seccion-intro { color: var(--gris); max-width: 62ch; }
+.seccion-intro { color: var(--gris); max-width: 62ch; font-weight: 300; }
 
 .seccion-cabeza {
   display: flex;
@@ -339,12 +348,12 @@ h1, h2, h3 {
   font-family: var(--fuente-condensada);
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.18em;
-  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  font-size: 0.72rem;
   color: var(--oro);
 }
-.programa h3 { font-size: 1.6rem; margin: 0.6rem 0 0.8rem; }
-.programa p { color: var(--gris); font-size: 0.98rem; }
+.programa h3 { font-size: 1.35rem; margin: 0.6rem 0 0.8rem; }
+.programa p { color: var(--gris); font-size: 0.94rem; font-weight: 300; }
 
 /* ---------- Valores ---------- */
 
@@ -364,11 +373,11 @@ h1, h2, h3 {
 .valor h3 {
   font-family: var(--fuente-condensada);
   font-weight: 700;
-  font-size: 1.25rem;
+  font-size: 1.12rem;
   letter-spacing: 0.1em;
   margin: 0.4rem 0 0.5rem;
 }
-.valor p { color: var(--gris); font-size: 0.97rem; }
+.valor p { color: var(--gris); font-size: 0.94rem; font-weight: 300; }
 
 /* ---------- Bloques visión / misión ---------- */
 
@@ -380,10 +389,11 @@ h1, h2, h3 {
 }
 
 .cita-grande {
-  font-family: var(--fuente-condensada);
-  font-weight: 500;
-  font-size: 1.45rem;
-  line-height: 1.45;
+  font-family: var(--fuente-texto);
+  font-weight: 300;
+  font-style: italic;
+  font-size: 1.3rem;
+  line-height: 1.6;
   border-left: 3px solid var(--rojo);
   padding-left: 1.4rem;
   color: var(--hueso);
@@ -395,8 +405,8 @@ h1, h2, h3 {
   border-radius: var(--radio);
   padding: 2rem 1.8rem;
 }
-.panel h3 { font-size: 1.5rem; margin-bottom: 0.9rem; color: var(--oro); }
-.panel p { color: var(--gris); }
+.panel h3 { font-size: 1.3rem; margin-bottom: 0.9rem; color: var(--oro); }
+.panel p { color: var(--gris); font-weight: 300; }
 .panel p + p { margin-top: 0.8rem; }
 
 /* ---------- Tabla de horarios ---------- */
@@ -414,7 +424,7 @@ table.horario th {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.14em;
-  font-size: 0.85rem;
+  font-size: 0.78rem;
   text-align: left;
   color: var(--hueso);
   background: var(--rojo);
@@ -434,7 +444,7 @@ table.horario tr:nth-child(even) td { background: var(--carbon-claro); }
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   padding: 0.25rem 0.6rem;
   border-radius: 999px;
   border: 1px solid var(--oro);
@@ -491,10 +501,10 @@ table.horario tr:nth-child(even) td { background: var(--carbon-claro); }
   font-family: var(--fuente-condensada);
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  font-size: 1.1rem;
+  letter-spacing: 0.08em;
+  font-size: 1rem;
 }
-.tarjeta-instagram p { color: var(--gris); font-size: 0.95rem; }
+.tarjeta-instagram p { color: var(--gris); font-size: 0.93rem; font-weight: 300; }
 
 /* ---------- Contacto ---------- */
 
@@ -514,8 +524,8 @@ table.horario tr:nth-child(even) td { background: var(--carbon-claro); }
   gap: 0.6rem;
   align-items: flex-start;
 }
-.contacto-tarjeta h3 { font-size: 1.4rem; }
-.contacto-tarjeta p { color: var(--gris); font-size: 0.97rem; flex: 1; }
+.contacto-tarjeta h3 { font-size: 1.25rem; }
+.contacto-tarjeta p { color: var(--gris); font-size: 0.94rem; font-weight: 300; flex: 1; }
 
 /* ---------- Llamado final ---------- */
 
@@ -527,8 +537,14 @@ table.horario tr:nth-child(even) td { background: var(--carbon-claro); }
     var(--negro);
   border-top: 1px solid var(--borde);
 }
-.llamado h2 { font-size: clamp(2.4rem, 6vw, 4rem); margin: 0 auto 1rem; max-width: 16ch; }
-.llamado p { color: var(--gris); max-width: 50ch; margin: 0 auto 2rem; }
+.llamado h2 {
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  font-weight: 900;
+  font-style: italic;
+  margin: 0 auto 1rem;
+  max-width: 18ch;
+}
+.llamado p { color: var(--gris); max-width: 50ch; margin: 0 auto 2rem; font-weight: 300; }
 
 /* ---------- Pie ---------- */
 
