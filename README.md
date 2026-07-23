@@ -18,7 +18,9 @@ sin build, sin dependencias. Se abre con doble clic y se publica gratis en GitHu
 
 La identidad visual sale del propio logo de la escuela: paleta negra con los colores de la
 bandera tailandesa (`#A51931` rojo · `#2D2A4A` azul marino) y dorado para los valores,
-tipografías **Anton** + **Barlow** y estética de afiche de pelea tailandés. El diseño rescata
+y estética de afiche de pelea tailandés. La tipografía es el trío tailandés de la fundición
+Cadson Demak: **Kanit** (titulares en negra cursiva — "Kanit" significa *matemáticas* en
+tailandés), **Chakra Petch** (etiquetas y botones, angular) y **Prompt** (texto de lectura). El diseño rescata
 los mejores patrones de los sitios de gimnasios top del mundo (Evolve MMA, Tiger Muay Thai,
 Bangtao, Yokkao): héroe a pantalla completa con CTA doble, marquee de valores, tarjetas de
 programas, tabla de horarios, botón flotante de contacto y llamado a la acción repetido.
