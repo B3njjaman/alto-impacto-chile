@@ -22,6 +22,7 @@ const ANIM = (() => {
   const animar = hayGsap && !quieto;
   let lenis = null;
   let carruseles = [];
+  let limpiezas = []; // tareas de desmontaje que no son ScrollTriggers
 
   if (animar) gsap.registerPlugin(ScrollTrigger);
 
@@ -66,30 +67,24 @@ const ANIM = (() => {
     bloquear ? lenis.stop() : lenis.start();
   }
 
-  // --- Entrada del titular del héroe, palabra por palabra -----
-  function animarTitular() {
+  // --- Entrada del héroe: una sola secuencia orquestada -------
+  function animarEntradaHeroe() {
     const palabras = document.querySelectorAll(".heroe .palabra > span");
     if (!palabras.length) return;
 
-    gsap.set(palabras, { yPercent: 115 });
-    gsap.to(palabras, {
-      yPercent: 0,
-      duration: 1,
-      ease: "expo.out",
-      stagger: 0.07,
-      delay: 0.1,
-    });
+    const acompanan = ".heroe .eyebrow, .heroe-interior > p, .heroe-acciones";
+    const linea = gsap.timeline({ defaults: { ease: "expo.out" } });
 
-    const acompanan = document.querySelectorAll(".heroe .eyebrow, .heroe-interior > p, .heroe-acciones, .acceso");
-    gsap.set(acompanan, { opacity: 0, y: 22 });
-    gsap.to(acompanan, {
-      opacity: 1,
-      y: 0,
-      duration: 0.8,
-      ease: "power3.out",
-      stagger: 0.07,
-      delay: 0.35,
-    });
+    linea
+      .set(palabras, { yPercent: 115 })
+      .set(acompanan, { opacity: 0, y: 22 })
+      .set(".acceso", { opacity: 0, y: 22 })
+      .from(".heroe-logo", { opacity: 0, duration: 1.6, ease: "power2.out" }, 0)
+      .to(".heroe .eyebrow", { opacity: 1, y: 0, duration: 0.7 }, 0.1)
+      .to(palabras, { yPercent: 0, duration: 1, stagger: 0.07 }, 0.2)
+      .to(".heroe-interior > p", { opacity: 1, y: 0, duration: 0.8 }, 0.55)
+      .to(".heroe-acciones", { opacity: 1, y: 0, duration: 0.8 }, 0.68)
+      .to(".acceso", { opacity: 1, y: 0, duration: 0.8, stagger: 0.09 }, 0.82);
   }
 
   // --- Aparición de bloques ----------------------------------
@@ -136,7 +131,6 @@ const ANIM = (() => {
 
     gsap.to(logo, {
       yPercent: 14,
-      scale: 1.06,
       ease: "none",
       scrollTrigger: {
         trigger: ".heroe",
@@ -170,6 +164,107 @@ const ANIM = (() => {
     });
   }
 
+  // --- Ticker que reacciona a la velocidad del scroll ---------
+  // GSAP le quita el bucle al CSS para poder acelerarlo según lo
+  // rápido que se desplace la página, y dejarlo volver a su ritmo.
+  function animarTicker() {
+    const pista = document.querySelector(".ticker-pista");
+    if (!pista) return;
+
+    pista.style.animation = "none";
+    const bucle = gsap.to(pista, {
+      xPercent: -50,
+      repeat: -1,
+      duration: 34,
+      ease: "none",
+    });
+
+    let objetivo = 1;
+    const disparador = ScrollTrigger.create({
+      onUpdate: (self) => {
+        objetivo = gsap.utils.clamp(1, 5, 1 + Math.abs(self.getVelocity()) / 900);
+      },
+    });
+
+    const suavizar = () => {
+      bucle.timeScale(gsap.utils.interpolate(bucle.timeScale(), objetivo, 0.08));
+      objetivo = gsap.utils.interpolate(objetivo, 1, 0.05);
+    };
+    gsap.ticker.add(suavizar);
+
+    limpiezas.push(() => {
+      gsap.ticker.remove(suavizar);
+      bucle.kill();
+      disparador.kill();
+      pista.style.animation = "";
+    });
+  }
+
+  // --- Bloque destacado (video o panel de los ocho miembros) --
+  function animarDestacado() {
+    const bloque = document.querySelector("[data-destacado]");
+    if (!bloque) return;
+
+    // fromTo con destino explícito: el valor por defecto de clip-path
+    // es `none` y GSAP no puede interpolar hacia ahí, así que el bloque
+    // se quedaría recortado a medias.
+    gsap.fromTo(
+      bloque,
+      { clipPath: "inset(10% 14% 10% 14%)" },
+      {
+        clipPath: "inset(0% 0% 0% 0%)",
+        duration: 1.1,
+        ease: "power3.out",
+        clearProps: "clipPath",
+        scrollTrigger: { trigger: bloque, start: "top 85%", once: true },
+      }
+    );
+
+    const piezas = bloque.querySelectorAll(
+      ".ocho .eyebrow, .ocho-titulo, .ocho-arma, .ocho-total, .destacado-pie > *"
+    );
+    if (piezas.length) {
+      gsap.set(piezas, { opacity: 0, y: 24 });
+      gsap.to(piezas, {
+        opacity: 1,
+        y: 0,
+        duration: 0.7,
+        ease: "power3.out",
+        stagger: 0.08,
+        scrollTrigger: { trigger: bloque, start: "top 78%", once: true },
+      });
+    }
+
+    const logo = bloque.querySelector(".ocho-logo");
+    if (logo) {
+      gsap.to(logo, {
+        yPercent: -12,
+        ease: "none",
+        scrollTrigger: { trigger: bloque, start: "top bottom", end: "bottom top", scrub: true },
+      });
+    }
+  }
+
+  // --- Cifras que cuentan hacia arriba ------------------------
+  // El HTML ya trae el número final escrito, así que sin GSAP se lee
+  // igual; aquí solo se anima desde cero.
+  function animarContadores() {
+    document.querySelectorAll("[data-contador]").forEach((el) => {
+      const fin = Number(el.dataset.contador);
+      if (!Number.isFinite(fin)) return;
+
+      const cuenta = { n: 0 };
+      gsap.to(cuenta, {
+        n: fin,
+        duration: 1.2,
+        ease: "power2.out",
+        snap: { n: 1 },
+        onUpdate: () => { el.textContent = String(Math.round(cuenta.n)); },
+        scrollTrigger: { trigger: el, start: "top 92%", once: true },
+      });
+    });
+  }
+
   // --- Carrusel de valores ------------------------------------
   function montarCarruseles() {
     if (!haySwiper) return;
@@ -198,16 +293,21 @@ const ANIM = (() => {
     montarCarruseles();
     if (!animar) return;
 
-    animarTitular();
+    animarEntradaHeroe();
     animarReveals();
     animarHeroe();
     animarBandas();
+    animarTicker();
+    animarDestacado();
+    animarContadores();
     ScrollTrigger.refresh();
   }
 
   function desmontar() {
     carruseles.forEach((c) => c.destroy(true, true));
     carruseles = [];
+    limpiezas.forEach((fn) => fn());
+    limpiezas = [];
     if (!animar) return;
     ScrollTrigger.getAll().forEach((t) => t.kill());
     gsap.killTweensOf("#app, #app *");

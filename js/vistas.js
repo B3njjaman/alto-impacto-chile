@@ -1,4 +1,4 @@
-// ============================================================
+﻿// ============================================================
 // VISTAS — plantillas HTML de cada ruta del sitio
 // ============================================================
 
@@ -85,6 +85,94 @@ function carruselValores() {
   </div>`;
 }
 
+// Las ocho armas del arte de los ocho miembros. Es el estado por
+// defecto del bloque destacado mientras no haya video cargado.
+const OCHO_ARMAS = [
+  { nombre: "Puños", cantidad: 2 },
+  { nombre: "Codos", cantidad: 2 },
+  { nombre: "Rodillas", cantidad: 2 },
+  { nombre: "Piernas", cantidad: 2 },
+];
+
+function panelOchoMiembros() {
+  return `
+  <div class="ocho">
+    <img class="ocho-logo" src="assets/logo-transparente.svg" alt="" />
+    <div class="ocho-interior">
+      <p class="eyebrow">Highlight</p>
+      <h2 class="ocho-titulo">El arte de los ocho miembros</h2>
+      <dl class="ocho-armas">
+        ${OCHO_ARMAS.map(a => `
+        <div class="ocho-arma">
+          <dt>${a.nombre}</dt>
+          <dd><span data-contador="${a.cantidad}">${a.cantidad}</span><small>armas</small></dd>
+        </div>`).join("")}
+      </dl>
+      <p class="ocho-total">
+        <strong data-contador="8">8</strong>
+        puntos de contacto: puños, codos, rodillas y piernas. Eso es lo que
+        se entrena en cada clase, paso a paso y sin apuro.
+      </p>
+    </div>
+  </div>`;
+}
+
+// Bloque destacado a ancho completo, encima de la sección de
+// entrenamiento. Se arma según lo que haya en DATOS.video.
+function bloqueDestacado() {
+  const v = DATOS.video || {};
+  const archivo = (v.archivo || "").trim();
+  const youtube = (v.youtube || "").trim();
+  const portada = (v.portada || "").trim();
+  const titulo = v.titulo || "Un entrenamiento por dentro";
+
+  // Sin video configurado: el panel de los ocho miembros.
+  if (!archivo && !youtube) {
+    return `<section class="destacado destacado--panel" data-destacado>${panelOchoMiembros()}</section>`;
+  }
+
+  const pie = `
+    <div class="destacado-velo"></div>
+    <div class="destacado-pie">
+      <div>
+        <p class="eyebrow">Highlight</p>
+        <h2>${titulo}</h2>
+      </div>
+      <a class="boton boton-rojo" href="#/clases">Ver las clases</a>
+    </div>`;
+
+  if (archivo) {
+    return `
+    <section class="destacado destacado--media" data-destacado>
+      <video class="destacado-media" autoplay muted loop playsinline
+        ${portada ? `poster="${portada}"` : ""}>
+        <source src="${archivo}" type="video/mp4" />
+      </video>
+      ${pie}
+    </section>`;
+  }
+
+  // YouTube: portada estática y carga del reproductor recién al pulsar.
+  const miniatura = portada || `https://i.ytimg.com/vi/${youtube}/maxresdefault.jpg`;
+  return `
+  <section class="destacado destacado--media" data-destacado>
+    <img class="destacado-media" src="${miniatura}" alt="" loading="lazy" />
+    <div class="destacado-velo"></div>
+    <button class="destacado-play" data-youtube="${youtube}" aria-label="Reproducir: ${titulo}">
+      <span>
+        <svg viewBox="0 0 24 24" width="30" height="30" fill="currentColor" aria-hidden="true"><path d="M8 5.2v13.6L19 12z"/></svg>
+      </span>
+    </button>
+    <div class="destacado-pie">
+      <div>
+        <p class="eyebrow">Highlight</p>
+        <h2>${titulo}</h2>
+      </div>
+      <a class="boton boton-rojo" href="#/clases">Ver las clases</a>
+    </div>
+  </section>`;
+}
+
 function llamadoFinal() {
   return `
   <section class="llamado">
@@ -146,6 +234,8 @@ const VISTAS = {
     </section>
 
     ${tickerValores()}
+
+    ${bloqueDestacado()}
 
     <section class="seccion">
       <div class="seccion-cabeza">

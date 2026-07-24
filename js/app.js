@@ -27,6 +27,27 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") cerrarMenu();
 });
 
+// --- Play del video destacado (YouTube) ----------------------
+// La vista dibuja solo la portada; el reproductor se carga recién al
+// pulsar, así la página no arrastra el peso de YouTube desde el inicio.
+// El listener va en el documento para sobrevivir a los cambios de vista.
+document.addEventListener("click", (e) => {
+  const boton = e.target.closest("[data-youtube]");
+  if (!boton) return;
+
+  const marco = document.createElement("iframe");
+  marco.src = `https://www.youtube-nocookie.com/embed/${boton.dataset.youtube}?autoplay=1&rel=0`;
+  marco.title = boton.getAttribute("aria-label") || "Video de Alto Impacto Chile";
+  marco.allow = "accelerometer; autoplay; encrypted-media; picture-in-picture";
+  marco.allowFullscreen = true;
+
+  const destacado = boton.closest(".destacado");
+  destacado.querySelector(".destacado-media")?.remove();
+  destacado.querySelector(".destacado-velo")?.remove();
+  boton.remove();
+  destacado.prepend(marco);
+});
+
 // --- Embeds oficiales de Instagram ---------------------------
 // Carga embed.js una sola vez y re-procesa los blockquotes al
 // cambiar de vista. Al hidratarse cambian de alto, así que hay que

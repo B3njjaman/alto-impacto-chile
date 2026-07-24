@@ -25,6 +25,21 @@ const DATOS = {
   whatsapp: "",
   correo: "",
 
+  // --- Video destacado (sección Entrenamiento) ---------------
+  // Rellena UNO de los dos y el bloque se arma solo:
+  //   archivo: "assets/video/entrenamiento.mp4"  → se reproduce en bucle,
+  //            sin sonido, como fondo en movimiento.
+  //   youtube: "dQw4w9WgXcQ"                     → muestra la portada y
+  //            carga el reproductor recién al pulsar play (más rápido).
+  // Si los dos quedan vacíos se muestra el panel "arte de los ocho
+  // miembros", así la sección nunca se ve vacía.
+  video: {
+    archivo: "",
+    youtube: "",
+    portada: "", // imagen de previsualización, opcional: "assets/galeria/portada.jpg"
+    titulo: "Un entrenamiento por dentro",
+  },
+
   // --- Horario referencial -----------------------------------
   // Cada bloque: dias, hora, clase, nivel.
   horario: [

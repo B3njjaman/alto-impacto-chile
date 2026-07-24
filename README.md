@@ -18,16 +18,31 @@ ni paso de build. Se abre con doble clic y se publica gratis en GitHub Pages.
 
 La identidad visual sale del propio logo de la escuela: paleta negra con los colores de la
 bandera tailandesa (`#A51931` rojo · `#2D2A4A` azul marino) y dorado reservado para los
-valores. La tipografía es el trío tailandés de la fundición Cadson Demak: **Kanit**
-(titulares en negra cursiva — "Kanit" significa *matemáticas* en tailandés),
-**Chakra Petch** (etiquetas y botones, angular) y **Prompt** (texto de lectura).
+valores. La tipografía es el trío tailandés de la fundición Cadson Demak: **Chakra Petch**
+en los titulares (sus esquinas biseladas dan filo sin caer en una tipografía agresiva),
+**Kanit** en etiquetas y botones —más ancha y redonda, hace contraste— y **Prompt** en el
+texto de lectura.
 
 La estructura de página sigue la línea de [AKA Thailand](https://www.akathailand.com/):
-negro casi puro con el rojo como único acento fuerte, barra superior de utilidad, trío de
-tarjetas de acceso al pie del héroe, ticker rojo, franja de acción a ancho completo y pie a
+negro casi puro con el rojo como único acento, barra superior de utilidad, trío de
+tarjetas de acceso al pie del héroe, ticker, franja de acción a ancho completo y pie a
 tres columnas. Donde AKA corta el scroll con fotos a sangre, aquí la imagen es la propia
 tipografía: **bandas de impacto** con una palabra gigante en contorno que se desplaza según
-la posición del scroll.
+la posición del scroll. La portada va deliberadamente apagada: el único color saturado de
+esa primera pantalla es el botón de acción.
+
+## 🎥 El bloque destacado
+
+Encima de la sección de entrenamiento hay un bloque a ancho completo que se arma solo según
+lo que pongas en `video` dentro de **`js/datos.js`**:
+
+| Configuración | Qué muestra |
+|---|---|
+| `archivo: "assets/video/entrenamiento.mp4"` | El video en bucle, sin sonido, como fondo en movimiento |
+| `youtube: "ID_DEL_VIDEO"` | La portada del video; el reproductor se carga recién al pulsar play, así la página no arrastra el peso de YouTube desde el inicio |
+| Ambos vacíos (por defecto) | El panel **arte de los ocho miembros**: las cuatro armas con sus cifras animadas |
+
+Así la sección nunca se ve vacía, tengas o no material grabado.
 
 ## 🎬 Librerías dinámicas
 
@@ -36,7 +51,7 @@ Se cargan por CDN desde `index.html` y las orquesta **`js/animaciones.js`**:
 | Librería | Para qué |
 |---|---|
 | [Lenis](https://github.com/darkroomengineering/lenis) | Scroll suave con inercia |
-| [GSAP](https://gsap.com/) + ScrollTrigger | Entrada del titular palabra por palabra, apariciones por scroll, parallax del logo y bandas de impacto |
+| [GSAP](https://gsap.com/) + ScrollTrigger | Secuencia de entrada del héroe, apariciones por scroll, parallax del logo, bandas de impacto, ticker que acelera con la velocidad del scroll y cifras que cuentan hacia arriba |
 | [Swiper](https://swiperjs.com/) | Carrusel de los 7 valores |
 
 Todo es **opcional por diseño**: ningún elemento nace invisible desde el CSS. El estado
@@ -80,6 +95,7 @@ Todo lo editable vive en **`js/datos.js`**:
 - **Galería local**: guarda fotos en `assets/galeria/` y regístralas en el arreglo
   `galeria`. Aparecen automáticamente en la página Galería.
 - **Posts de Instagram**: agrega permalinks en `instagram.posts` para sumar más embeds.
+- **Video destacado**: rellena `video.archivo` o `video.youtube` (ver la tabla de arriba).
 
 ## 🖼️ El logo vectorizado
 
