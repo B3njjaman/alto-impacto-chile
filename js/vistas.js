@@ -12,6 +12,14 @@ const VALORES = [
   { nombre: "Persistencia", texto: "Valoramos el proceso, el aprendizaje continuo y la capacidad de no rendirse." },
 ];
 
+const ICONOS = {
+  guante: `<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M6 9a3 3 0 0 1 3-3h4.5A4.5 4.5 0 0 1 18 10.5V14a3 3 0 0 1-3 3H9a3 3 0 0 1-3-3V9Z"/><path d="M6 11H4.5A1.5 1.5 0 0 0 3 12.5 1.5 1.5 0 0 0 4.5 14H6"/><path d="M8 17v1.5A1.5 1.5 0 0 0 9.5 20h5a1.5 1.5 0 0 0 1.5-1.5V17"/></svg>`,
+  reloj: `<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.2V12l3.1 2"/></svg>`,
+  pin: `<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s6.5-5.4 6.5-10a6.5 6.5 0 1 0-13 0C5.5 15.6 12 21 12 21Z"/><circle cx="12" cy="11" r="2.4"/></svg>`,
+};
+
+// ---------- Piezas reutilizables ----------
+
 // Cinta divisoria inspirada en la bandera tailandesa del logo.
 function cintaThai() {
   return `
@@ -22,21 +30,68 @@ function cintaThai() {
   </svg>`;
 }
 
-function marqueeValores() {
-  const items = VALORES.map(v => `<span>${v.nombre}</span><span class="oro">★</span>`).join("");
+// Ticker rojo con los valores de la escuela.
+function tickerValores() {
+  const items = VALORES.map(v => `<span>${v.nombre}</span><span class="marca-separador">★</span>`).join("");
   return `
-  <div class="marquee" aria-hidden="true">
-    <div class="marquee-pista">${items}${items}</div>
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-pista">${items}${items}</div>
+  </div>`;
+}
+
+// Banda de impacto: la palabra de fondo se mueve con el scroll.
+function banda({ fantasma, eyebrow, titulo, cuerpo = "", boton = "" }) {
+  return `
+  <section class="banda">
+    <div class="banda-fantasma" aria-hidden="true">${fantasma} · ${fantasma} · ${fantasma}</div>
+    <div class="banda-interior">
+      <p class="eyebrow eyebrow-centro reveal">${eyebrow}</p>
+      <h2 class="reveal">${titulo}</h2>
+      ${cuerpo}
+      ${boton}
+    </div>
+  </section>`;
+}
+
+// Franja roja de ancho completo, el atajo directo a la escuela.
+function franjaAccion() {
+  return `
+  <a class="franja" href="${DATOS.instagram.dm}" target="_blank" rel="noopener">
+    <span>Escríbenos por Instagram y agenda tu clase de prueba →</span>
+  </a>`;
+}
+
+function carruselValores() {
+  return `
+  <div class="valores-carrusel swiper" data-carrusel="valores">
+    <div class="swiper-wrapper">
+      ${VALORES.map(v => `
+      <div class="swiper-slide">
+        <article class="valor">
+          <span class="estrella">★</span>
+          <h3>${v.nombre.toUpperCase()}</h3>
+          <p>${v.texto}</p>
+        </article>
+      </div>`).join("")}
+    </div>
+  </div>
+  <div class="carrusel-control">
+    <button class="carrusel-boton" data-carrusel-anterior aria-label="Valor anterior">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+    </button>
+    <button class="carrusel-boton" data-carrusel-siguiente aria-label="Valor siguiente">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+    </button>
   </div>`;
 }
 
 function llamadoFinal() {
   return `
-  <section class="llamado reveal">
-    <p class="eyebrow" style="justify-content:center">Da el primer paso</p>
-    <h2>Tu mejor versión te está esperando</h2>
-    <p>Escríbenos por Instagram y agenda tu clase de prueba. No necesitas experiencia: solo ganas de empezar.</p>
-    <a class="boton boton-rojo" href="${DATOS.instagram.dm}" target="_blank" rel="noopener">Agenda tu clase de prueba</a>
+  <section class="llamado">
+    <p class="eyebrow eyebrow-centro reveal">Da el primer paso</p>
+    <h2 class="reveal">Tu mejor versión te está esperando</h2>
+    <p class="reveal">Escríbenos por Instagram y agenda tu clase de prueba. No necesitas experiencia: solo ganas de empezar.</p>
+    <a class="boton boton-rojo reveal" href="${DATOS.instagram.dm}" target="_blank" rel="noopener">Agenda tu clase de prueba</a>
   </section>`;
 }
 
@@ -50,24 +105,55 @@ const VISTAS = {
       <img class="heroe-logo" src="assets/logo-transparente.svg" alt="" />
       <div class="heroe-interior">
         <p class="eyebrow">Muay Thai · ${DATOS.ciudad}</p>
-        <h1>Descubre tu <span class="acento">mejor versión</span></h1>
+        <h1>
+          <span class="palabra"><span>Descubre</span></span>
+          <span class="palabra"><span>tu</span></span>
+          <span class="palabra acento"><span>mejor</span></span>
+          <span class="palabra acento"><span>versión</span></span>
+        </h1>
         <p>Entrenamiento disciplinado, progresivo y respetuoso. Avanza a tu propio ritmo, fortalece tu confianza y alcanza tus metas dentro y fuera del entrenamiento.</p>
         <div class="heroe-acciones">
           <a class="boton boton-rojo" href="#/contacto">Agenda tu clase de prueba</a>
           <a class="boton boton-borde" href="#/nosotros">Conoce la escuela</a>
         </div>
       </div>
+
+      <div class="accesos-envoltura">
+        <div class="accesos">
+          <a class="acceso" href="#/clases">
+            ${ICONOS.guante}
+            <span class="acceso-texto">
+              <strong>Clases y niveles<br />Cómo se entrena aquí</strong>
+              <span class="acceso-detalle">Ver clases ›</span>
+            </span>
+          </a>
+          <a class="acceso" href="#/horarios">
+            ${ICONOS.reloj}
+            <span class="acceso-texto">
+              <strong>Horarios semanales<br />Cuándo entrenamos</strong>
+              <span class="acceso-detalle">Ver horarios ›</span>
+            </span>
+          </a>
+          <a class="acceso" href="#/contacto">
+            ${ICONOS.pin}
+            <span class="acceso-texto">
+              <strong>Dónde estamos<br />Cómo llegar y escribirnos</strong>
+              <span class="acceso-detalle">Ver contacto ›</span>
+            </span>
+          </a>
+        </div>
+      </div>
     </section>
 
-    ${marqueeValores()}
+    ${tickerValores()}
 
     <section class="seccion">
-      <div class="seccion-cabeza reveal">
-        <div>
+      <div class="seccion-cabeza">
+        <div class="reveal">
           <p class="eyebrow">Entrenamiento</p>
           <h2>Un camino para cada persona</h2>
         </div>
-        <a class="boton boton-borde" href="#/clases">Ver las clases</a>
+        <a class="boton boton-borde reveal" href="#/clases">Ver las clases</a>
       </div>
       <div class="programas">
         <article class="programa reveal">
@@ -88,31 +174,25 @@ const VISTAS = {
       </div>
     </section>
 
-    <div class="seccion-oscura-envoltura">
-      <section class="seccion">
-        <div class="dos-columnas">
-          <div class="reveal">
-            <p class="eyebrow">Nuestra escuela</p>
-            <h2>El esfuerzo vale más que la violencia</h2>
-            <p class="seccion-intro">En Alto Impacto Chile creemos en un camino de superación real, donde el esfuerzo, el autocontrol y la perseverancia construyen una vida más fuerte, segura y consciente.</p>
-            <p style="margin-top:1.5rem"><a class="boton boton-borde" href="#/nosotros">Visión, misión y valores</a></p>
-          </div>
-          <blockquote class="cita-grande reveal">
-            «Acompañamos a cada persona en su proceso de crecimiento físico, mental y emocional, para que avance a su propio ritmo y alcance sus metas dentro y fuera del entrenamiento.»
-          </blockquote>
-        </div>
-      </section>
-    </div>
+    ${banda({
+      fantasma: "Esfuerzo",
+      eyebrow: "Nuestra escuela",
+      titulo: "El esfuerzo vale más que la violencia",
+      cuerpo: `
+        <p class="reveal">En Alto Impacto Chile creemos en un camino de superación real, donde el esfuerzo, el autocontrol y la perseverancia construyen una vida más fuerte, segura y consciente.</p>
+        <blockquote class="banda-cita reveal">«Acompañamos a cada persona en su proceso de crecimiento físico, mental y emocional, para que avance a su propio ritmo y alcance sus metas dentro y fuera del entrenamiento.»</blockquote>`,
+      boton: `<a class="boton boton-borde reveal" href="#/nosotros">Visión, misión y valores</a>`,
+    })}
 
     ${cintaThai()}
 
     <section class="seccion">
-      <div class="seccion-cabeza reveal">
-        <div>
+      <div class="seccion-cabeza">
+        <div class="reveal">
           <p class="eyebrow">Comunidad</p>
           <h2>Síguenos en Instagram</h2>
         </div>
-        <a class="boton boton-borde" href="#/galeria">Ver la galería</a>
+        <a class="boton boton-borde reveal" href="#/galeria">Ver la galería</a>
       </div>
       <div class="galeria-grid">
         <div class="tarjeta-instagram reveal">
@@ -125,6 +205,7 @@ const VISTAS = {
       </div>
     </section>
 
+    ${franjaAccion()}
     ${llamadoFinal()}
     `,
   },
@@ -159,18 +240,18 @@ const VISTAS = {
     ${cintaThai()}
 
     <section class="seccion">
-      <p class="eyebrow reveal">Lo que nos define</p>
-      <h2 class="reveal">Nuestros valores</h2>
-      <div class="valores" style="margin-top:2rem">
-        ${VALORES.map(v => `
-        <article class="valor reveal">
-          <span class="estrella">★</span>
-          <h3>${v.nombre.toUpperCase()}</h3>
-          <p>${v.texto}</p>
-        </article>`).join("")}
+      <div class="seccion-cabeza">
+        <div class="reveal">
+          <p class="eyebrow">Lo que nos define</p>
+          <h2>Nuestros valores</h2>
+        </div>
+      </div>
+      <div class="reveal">
+        ${carruselValores()}
       </div>
     </section>
 
+    ${franjaAccion()}
     ${llamadoFinal()}
     `,
   },
@@ -184,18 +265,18 @@ const VISTAS = {
       <h2 class="reveal">Así se entrena en Alto Impacto</h2>
       <p class="seccion-intro reveal">Cada clase combina técnica, acondicionamiento y trabajo en equipo. El nivel se adapta a ti: nadie queda atrás y nadie se aburre.</p>
 
-      <div class="programas" style="margin-top:2.5rem">
-        <article class="programa reveal">
+      <div class="programas" style="margin-top:2.8rem">
+        <article class="programa programa-paso reveal" data-paso="01">
           <span class="nivel">Paso 1</span>
           <h3>Iniciación</h3>
           <p>Postura, desplazamientos y los golpes fundamentales del arte de los ocho miembros: puños, codos, rodillas y piernas. Sin experiencia previa.</p>
         </article>
-        <article class="programa reveal">
+        <article class="programa programa-paso reveal" data-paso="02">
           <span class="nivel">Paso 2</span>
           <h3>Intermedio</h3>
           <p>Combinaciones, defensa, clinch y trabajo de pads. Empiezas a construir tu propio estilo con la técnica como base.</p>
         </article>
-        <article class="programa reveal">
+        <article class="programa programa-paso reveal" data-paso="03">
           <span class="nivel">Paso 3</span>
           <h3>Avanzado</h3>
           <p>Estrategia, ritmo y sparring controlado. La intensidad sube, el respeto se mantiene: el autocontrol es la regla número uno.</p>
@@ -210,7 +291,7 @@ const VISTAS = {
             <p class="eyebrow">Tu primera clase</p>
             <h2>¿Qué necesito para empezar?</h2>
             <p class="seccion-intro">Menos de lo que crees. Para tu primera clase basta con:</p>
-            <ul style="margin:1.2rem 0 0 1.2rem; color:var(--gris); display:grid; gap:0.5rem">
+            <ul class="lista-marcada">
               <li>Ropa deportiva cómoda</li>
               <li>Botella de agua y toalla</li>
               <li>Ganas de aprender: el equipo se conversa al llegar</li>
@@ -225,16 +306,19 @@ const VISTAS = {
       </section>
     </div>
 
-    ${cintaThai()}
+    ${banda({
+      fantasma: "Ocho miembros",
+      eyebrow: "Da el paso",
+      titulo: "¿Listo para probar?",
+      cuerpo: `<p class="reveal">Revisa los horarios y agenda tu primera clase.</p>`,
+      boton: `
+        <div class="heroe-acciones reveal" style="justify-content:center">
+          <a class="boton boton-rojo" href="#/horarios">Ver horarios</a>
+          <a class="boton boton-borde" href="#/contacto">Contacto</a>
+        </div>`,
+    })}
 
-    <section class="seccion" style="text-align:center">
-      <h2 class="reveal" style="margin-inline:auto">¿Listo para probar?</h2>
-      <p class="seccion-intro reveal" style="margin:0 auto 2rem">Revisa los horarios y agenda tu primera clase.</p>
-      <div class="heroe-acciones reveal" style="justify-content:center">
-        <a class="boton boton-rojo" href="#/horarios">Ver horarios</a>
-        <a class="boton boton-borde" href="#/contacto">Contacto</a>
-      </div>
-    </section>
+    ${franjaAccion()}
     `,
   },
 
@@ -246,7 +330,7 @@ const VISTAS = {
       <p class="eyebrow reveal">Horarios</p>
       <h2 class="reveal">Planifica tu semana</h2>
 
-      <div class="tabla-envoltura reveal" style="margin-top:2rem">
+      <div class="tabla-envoltura reveal" style="margin-top:2.2rem">
         <table class="horario">
           <thead>
             <tr><th>Días</th><th>Horario</th><th>Clase</th><th>Nivel</th></tr>
@@ -265,6 +349,7 @@ const VISTAS = {
       <p class="nota reveal">${DATOS.notaHorario}</p>
     </section>
 
+    ${franjaAccion()}
     ${llamadoFinal()}
     `,
   },
@@ -274,12 +359,12 @@ const VISTAS = {
     titulo: "Galería · Alto Impacto Chile",
     html: () => `
     <section class="seccion">
-      <div class="seccion-cabeza reveal">
-        <div>
+      <div class="seccion-cabeza">
+        <div class="reveal">
           <p class="eyebrow">Galería</p>
           <h2>La escuela en acción</h2>
         </div>
-        <a class="boton boton-rojo" href="${DATOS.instagram.url}" target="_blank" rel="noopener">Seguir en Instagram</a>
+        <a class="boton boton-rojo reveal" href="${DATOS.instagram.url}" target="_blank" rel="noopener">Seguir en Instagram</a>
       </div>
 
       <div class="galeria-grid">
@@ -297,6 +382,7 @@ const VISTAS = {
       </div>
     </section>
 
+    ${franjaAccion()}
     ${llamadoFinal()}
     `,
   },
@@ -313,7 +399,7 @@ const VISTAS = {
       <h2 class="reveal">Agenda tu clase de prueba</h2>
       <p class="seccion-intro reveal">Cuéntanos tu experiencia (o si partes de cero) y te orientamos con el mejor horario para empezar.</p>
 
-      <div class="contacto-grid" style="margin-top:2.5rem">
+      <div class="contacto-grid" style="margin-top:2.8rem">
         <div class="contacto-tarjeta reveal">
           <h3>Instagram</h3>
           <p>El canal más rápido: escríbenos por mensaje directo y te respondemos a la brevedad.</p>
@@ -341,22 +427,27 @@ const VISTAS = {
 
     ${cintaThai()}
 
-    <section class="seccion" style="text-align:center">
-      <h2 class="reveal" style="margin-inline:auto; max-width:24ch">Primera vez entrenando un arte marcial</h2>
-      <p class="seccion-intro reveal" style="margin:0 auto 2rem">Perfecto: nuestra especialidad es acompañarte desde cero, a tu propio ritmo y con respeto.</p>
-      <a class="boton boton-rojo reveal" href="${DATOS.instagram.dm}" target="_blank" rel="noopener">Quiero empezar</a>
-    </section>
+    ${banda({
+      fantasma: "Empieza",
+      eyebrow: "Sin experiencia previa",
+      titulo: "Primera vez entrenando un arte marcial",
+      cuerpo: `<p class="reveal">Perfecto: nuestra especialidad es acompañarte desde cero, a tu propio ritmo y con respeto.</p>`,
+      boton: `<a class="boton boton-rojo reveal" href="${DATOS.instagram.dm}" target="_blank" rel="noopener">Quiero empezar</a>`,
+    })}
     `;
     },
   },
 };
 
 // Embed oficial de Instagram: el script embed.js lo hidrata con la foto real.
+// Sin clase `reveal` a propósito: embed.js reemplaza el blockquote por un
+// iframe y se lleva el `style` inline, así que heredaría el opacity:0 de la
+// animación mientras el tween apunta a un nodo que ya no está en el DOM.
 function embedInstagram(permalink) {
   return `
-  <blockquote class="instagram-media reveal" data-instgrm-permalink="${permalink}" data-instgrm-version="14"
-    style="background:#15151a; border:1px solid #26262e; border-radius:10px; max-width:540px; min-width:unset; width:100%;">
-    <a href="${permalink}" target="_blank" rel="noopener" style="display:block; padding:2rem; color:#9a99a1; text-decoration:none; text-align:center;">
+  <blockquote class="instagram-media" data-instgrm-permalink="${permalink}" data-instgrm-version="14"
+    style="background:#101014; border:1px solid #22222a; border-radius:0; max-width:540px; min-width:unset; width:100%;">
+    <a href="${permalink}" target="_blank" rel="noopener" style="display:block; padding:2rem; color:#8f8f98; text-decoration:none; text-align:center;">
       Ver esta publicación en Instagram
     </a>
   </blockquote>`;
@@ -366,10 +457,11 @@ function embedInstagram(permalink) {
 const VISTA_404 = {
   titulo: "Página no encontrada · Alto Impacto Chile",
   html: () => `
-  <section class="seccion" style="text-align:center; min-height:50vh; display:flex; flex-direction:column; justify-content:center; align-items:center">
-    <p class="eyebrow" style="justify-content:center">Error 404</p>
-    <h2 style="margin-inline:auto">Te saliste del ring</h2>
-    <p class="seccion-intro" style="margin:0 auto 2rem">La página que buscas no existe. Volvamos al entrenamiento.</p>
-    <a class="boton boton-rojo" href="#/">Volver al inicio</a>
-  </section>`,
+  ${banda({
+    fantasma: "404",
+    eyebrow: "Error 404",
+    titulo: "Te saliste del ring",
+    cuerpo: `<p class="reveal">La página que buscas no existe. Volvamos al entrenamiento.</p>`,
+    boton: `<a class="boton boton-rojo reveal" href="#/">Volver al inicio</a>`,
+  })}`,
 };

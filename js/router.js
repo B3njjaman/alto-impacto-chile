@@ -13,6 +13,10 @@ function renderizar() {
   const vista = VISTAS[ruta] || VISTA_404;
   const app = document.getElementById("app");
 
+  // Antes de reemplazar el DOM hay que soltar las animaciones y
+  // carruseles que apuntaban a los nodos que están por desaparecer.
+  ANIM.desmontar();
+
   app.innerHTML = vista.html();
   document.title = vista.titulo;
 
@@ -23,13 +27,9 @@ function renderizar() {
     else a.removeAttribute("aria-current");
   });
 
-  // Cierra el menú móvil si estaba abierto.
-  document.getElementById("navegacion").classList.remove("abierta");
-  document.getElementById("menuBoton").setAttribute("aria-expanded", "false");
-
-  window.scrollTo({ top: 0, behavior: "instant" });
-
-  activarReveals();
+  cerrarMenu();
+  ANIM.irArriba();
+  ANIM.montar();
   procesarEmbedsInstagram();
 }
 

@@ -13,24 +13,42 @@
 
 ## ✨ Qué es esto
 
-Una página web **enrutada (SPA)** hecha con HTML, CSS y JavaScript puros — sin frameworks,
-sin build, sin dependencias. Se abre con doble clic y se publica gratis en GitHub Pages.
+Una página web **enrutada (SPA)** hecha con HTML, CSS y JavaScript puros — sin frameworks
+ni paso de build. Se abre con doble clic y se publica gratis en GitHub Pages.
 
 La identidad visual sale del propio logo de la escuela: paleta negra con los colores de la
-bandera tailandesa (`#A51931` rojo · `#2D2A4A` azul marino) y dorado para los valores,
-y estética de afiche de pelea tailandés. La tipografía es el trío tailandés de la fundición
-Cadson Demak: **Kanit** (titulares en negra cursiva — "Kanit" significa *matemáticas* en
-tailandés), **Chakra Petch** (etiquetas y botones, angular) y **Prompt** (texto de lectura). El diseño rescata
-los mejores patrones de los sitios de gimnasios top del mundo (Evolve MMA, Tiger Muay Thai,
-Bangtao, Yokkao): héroe a pantalla completa con CTA doble, marquee de valores, tarjetas de
-programas, tabla de horarios, botón flotante de contacto y llamado a la acción repetido.
+bandera tailandesa (`#A51931` rojo · `#2D2A4A` azul marino) y dorado reservado para los
+valores. La tipografía es el trío tailandés de la fundición Cadson Demak: **Kanit**
+(titulares en negra cursiva — "Kanit" significa *matemáticas* en tailandés),
+**Chakra Petch** (etiquetas y botones, angular) y **Prompt** (texto de lectura).
+
+La estructura de página sigue la línea de [AKA Thailand](https://www.akathailand.com/):
+negro casi puro con el rojo como único acento fuerte, barra superior de utilidad, trío de
+tarjetas de acceso al pie del héroe, ticker rojo, franja de acción a ancho completo y pie a
+tres columnas. Donde AKA corta el scroll con fotos a sangre, aquí la imagen es la propia
+tipografía: **bandas de impacto** con una palabra gigante en contorno que se desplaza según
+la posición del scroll.
+
+## 🎬 Librerías dinámicas
+
+Se cargan por CDN desde `index.html` y las orquesta **`js/animaciones.js`**:
+
+| Librería | Para qué |
+|---|---|
+| [Lenis](https://github.com/darkroomengineering/lenis) | Scroll suave con inercia |
+| [GSAP](https://gsap.com/) + ScrollTrigger | Entrada del titular palabra por palabra, apariciones por scroll, parallax del logo y bandas de impacto |
+| [Swiper](https://swiperjs.com/) | Carrusel de los 7 valores |
+
+Todo es **opcional por diseño**: ningún elemento nace invisible desde el CSS. El estado
+inicial lo aplica GSAP solo cuando de verdad va a animarlo, así que si una librería no carga
+—o si el sistema pide *movimiento reducido*— el sitio se muestra completo y quieto.
 
 ## 🗺️ Rutas del sitio
 
 | Ruta | Contenido |
 |---|---|
-| `#/` | Inicio: héroe-afiche, valores, programas, visión resumida e Instagram |
-| `#/nosotros` | Visión, misión y los 7 valores completos de la escuela |
+| `#/` | Inicio: héroe-afiche con accesos, ticker de valores, programas, banda de impacto e Instagram |
+| `#/nosotros` | Visión, misión y los 7 valores en carrusel |
 | `#/clases` | Niveles de entrenamiento, qué llevar a la primera clase y reglas de la casa |
 | `#/horarios` | Tabla de horarios semanal (editable en `js/datos.js`) |
 | `#/galeria` | Publicaciones reales de Instagram (embeds oficiales) + fotos locales |
@@ -74,13 +92,14 @@ También existe `assets/logo-transparente.svg` (sin fondo) para usar sobre secci
 ## 📁 Estructura
 
 ```
-├── index.html            # Shell: cabecera, navegación, pie y botón flotante
+├── index.html            # Shell: barra superior, cabecera, pie y botón flotante
 ├── css/estilos.css       # Hoja de estilos completa (tokens de diseño arriba)
 ├── js/
 │   ├── datos.js          # ← DATOS EDITABLES (contacto, horarios, galería)
-│   ├── vistas.js         # Plantillas HTML de cada ruta
+│   ├── vistas.js         # Plantillas HTML de cada ruta y piezas reutilizables
+│   ├── animaciones.js    # Lenis + GSAP + Swiper (montar/desmontar por vista)
 │   ├── router.js         # Router SPA por hash
-│   └── app.js            # Menú móvil, animaciones, embeds de Instagram
+│   └── app.js            # Menú móvil, embeds de Instagram y datos en la interfaz
 └── assets/
     ├── logo.svg              # Logo vectorizado (fondo negro)
     ├── logo-transparente.svg # Logo vectorizado (sin fondo)

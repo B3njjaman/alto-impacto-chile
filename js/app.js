@@ -1,61 +1,98 @@
 // ============================================================
-// APP — comportamiento global: menú, reveals, embeds, contacto
+// APP — comportamiento global: menú, embeds y datos en la interfaz
 // ============================================================
 
 // --- Menú móvil ---------------------------------------------
 const menuBoton = document.getElementById("menuBoton");
+const navegacion = document.getElementById("navegacion");
+
+function cerrarMenu() {
+  if (!navegacion.classList.contains("abierta")) return;
+  navegacion.classList.remove("abierta");
+  document.body.classList.remove("menu-abierto");
+  menuBoton.setAttribute("aria-expanded", "false");
+  menuBoton.setAttribute("aria-label", "Abrir menú");
+  ANIM.bloquearScroll(false);
+}
+
 menuBoton.addEventListener("click", () => {
-  const nav = document.getElementById("navegacion");
-  const abierto = nav.classList.toggle("abierta");
+  const abierto = navegacion.classList.toggle("abierta");
+  document.body.classList.toggle("menu-abierto", abierto);
   menuBoton.setAttribute("aria-expanded", String(abierto));
+  menuBoton.setAttribute("aria-label", abierto ? "Cerrar menú" : "Abrir menú");
+  ANIM.bloquearScroll(abierto);
 });
 
-// --- Animaciones de aparición (respetan reduced motion) ------
-const prefiereQuieto = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-function activarReveals() {
-  const elementos = document.querySelectorAll(".reveal");
-  if (prefiereQuieto || !("IntersectionObserver" in window)) {
-    elementos.forEach((el) => el.classList.add("visible"));
-    return;
-  }
-  const observador = new IntersectionObserver(
-    (entradas) => {
-      entradas.forEach((e) => {
-        if (e.isIntersecting) {
-          e.target.classList.add("visible");
-          observador.unobserve(e.target);
-        }
-      });
-    },
-    { threshold: 0.12 }
-  );
-  elementos.forEach((el) => observador.observe(el));
-}
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") cerrarMenu();
+});
 
 // --- Embeds oficiales de Instagram ---------------------------
 // Carga embed.js una sola vez y re-procesa los blockquotes al
-// cambiar de vista.
+// cambiar de vista. Al hidratarse cambian de alto, así que hay que
+// recalcular las posiciones de las animaciones por scroll.
 let embedCargado = false;
 function procesarEmbedsInstagram() {
   if (!document.querySelector(".instagram-media")) return;
+
+  const recalcularLuego = () => {
+    setTimeout(() => ANIM.recalcular(), 1200);
+    setTimeout(() => ANIM.recalcular(), 3000);
+  };
+
   if (window.instgrm && window.instgrm.Embeds) {
     window.instgrm.Embeds.process();
+    recalcularLuego();
     return;
   }
   if (embedCargado) return;
   embedCargado = true;
+
   const s = document.createElement("script");
   s.src = "https://www.instagram.com/embed.js";
   s.async = true;
+  s.addEventListener("load", recalcularLuego);
   document.body.appendChild(s);
 }
 
 // --- Datos globales en la interfaz ---------------------------
+const ABREVIATURAS = {
+  Lunes: "Lun", Martes: "Mar", Miércoles: "Mié", Jueves: "Jue",
+  Viernes: "Vie", Sábado: "Sáb", Domingo: "Dom",
+};
+
+// "Lunes · Miércoles · Viernes" → "Lun · Mié · Vie"
+function abreviarDias(dias) {
+  return dias
+    .split("·")
+    .map((d) => ABREVIATURAS[d.trim()] || d.trim())
+    .join(" · ");
+}
+
 document.getElementById("anio").textContent = new Date().getFullYear();
-document.getElementById("pieInstagram").href = DATOS.instagram.url;
-document.getElementById("pieInstagram").textContent = `Instagram → @${DATOS.instagram.usuario}`;
+document.getElementById("barraCiudad").textContent = DATOS.ciudad;
 document.getElementById("pieCiudad").textContent = DATOS.ciudad;
+
+const enlacesInstagram = [
+  document.getElementById("barraInstagram"),
+  document.getElementById("pieInstagram"),
+];
+enlacesInstagram.forEach((a) => {
+  a.href = DATOS.instagram.url;
+  a.textContent = `@${DATOS.instagram.usuario}`;
+});
+
+// Barra superior: el primer bloque del horario, en corto.
+const primerBloque = DATOS.horario[0];
+if (primerBloque) {
+  document.getElementById("barraHorario").textContent =
+    `${abreviarDias(primerBloque.dias)} · ${primerBloque.hora}`;
+}
+
+// Pie: la semana completa, dos columnas.
+document.getElementById("pieHorario").innerHTML = DATOS.horario
+  .map((h) => `<tr><td>${abreviarDias(h.dias)}</td><td>${h.hora}</td></tr>`)
+  .join("");
 
 // Botón flotante: WhatsApp si hay número; si no, DM de Instagram.
 const flotante = document.getElementById("botonFlotante");
