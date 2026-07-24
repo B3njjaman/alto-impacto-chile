@@ -38,9 +38,9 @@ const MIEMBROS = [
   },
 ];
 
-// Silueta original en pose de guardia, con mongkon — construida con
-// formas simples (líneas gruesas de puntas redondeadas + círculos),
-// en el mismo tono --hueso que el luchador del héroe.
+// Silueta original inspirada en el luchador del logo (capucha,
+// definición muscular, vendaje en las muñecas y shorts de Muay
+// Thai) — blanco y negro, construida a mano con formas SVG.
 function seccionMiembros() {
   return `
   <section class="seccion">
@@ -52,28 +52,36 @@ function seccionMiembros() {
       <div class="miembros-figura-envoltura">
         <svg class="miembros-figura" viewBox="0 0 200 340" aria-hidden="true">
           <g class="miembros-parte">
-            <ellipse cx="100" cy="20" rx="14" ry="8" class="miembros-mongkon" />
-            <path d="M112,22 Q124,40 118,65" class="miembros-mongkon" />
+            <path d="M100,28 C120,28 133,44 133,64 C133,76 128,85 119,89 L81,89 C72,85 67,76 67,64 C67,44 80,28 100,28 Z" class="miembros-cuerpo" />
+            <path d="M80,42 Q100,36 120,42" class="miembros-detalle" />
+            <path d="M75,60 Q100,52 125,60" class="miembros-detalle" />
+            <path d="M100,68 L100,86" class="miembros-detalle" />
           </g>
           <g class="miembros-parte">
-            <circle cx="100" cy="52" r="20" class="miembros-cuerpo" />
+            <path d="M72,79 L128,79 L120,190 L80,190 Z" class="miembros-cuerpo" />
+            <path d="M78,96 Q100,103 122,96" class="miembros-detalle" />
+            <path d="M89,121 Q100,125 111,121" class="miembros-detalle" />
+            <path d="M91,146 Q100,150 109,146" class="miembros-detalle" />
           </g>
           <g class="miembros-parte">
-            <path d="M68,68 L132,68 L120,192 L80,192 Z" class="miembros-cuerpo" />
+            <line x1="119" y1="82" x2="133" y2="50" class="miembros-cuerpo" stroke-width="24" />
+            <line x1="129" y1="86" x2="151" y2="126" class="miembros-cuerpo" stroke-width="28" />
+            <ellipse cx="140" cy="104" rx="15" ry="19" class="miembros-cuerpo" />
+            <circle cx="151" cy="126" r="15" class="miembros-cuerpo" />
+            <line x1="151" y1="126" x2="133" y2="50" class="miembros-cuerpo" stroke-width="20" />
+            <circle cx="133" cy="50" r="15" class="miembros-cuerpo" />
+            <path d="M126,72 L138,66" class="miembros-detalle" />
+            <path d="M130,82 L142,76" class="miembros-detalle" />
           </g>
           <g class="miembros-parte">
-            <line x1="118" y1="80" x2="132" y2="50" class="miembros-cuerpo" stroke-width="24" />
-            <line x1="126" y1="90" x2="148" y2="128" class="miembros-cuerpo" stroke-width="26" />
-            <circle cx="148" cy="128" r="14" class="miembros-cuerpo" />
-            <line x1="148" y1="128" x2="132" y2="50" class="miembros-cuerpo" stroke-width="20" />
-            <circle cx="132" cy="50" r="15" class="miembros-cuerpo" />
-          </g>
-          <g class="miembros-parte">
-            <line x1="82" y1="80" x2="68" y2="50" class="miembros-cuerpo" stroke-width="24" />
-            <line x1="74" y1="90" x2="52" y2="128" class="miembros-cuerpo" stroke-width="26" />
-            <circle cx="52" cy="128" r="14" class="miembros-cuerpo" />
-            <line x1="52" y1="128" x2="68" y2="50" class="miembros-cuerpo" stroke-width="20" />
-            <circle cx="68" cy="50" r="15" class="miembros-cuerpo" />
+            <line x1="81" y1="82" x2="67" y2="50" class="miembros-cuerpo" stroke-width="24" />
+            <line x1="71" y1="86" x2="49" y2="126" class="miembros-cuerpo" stroke-width="28" />
+            <ellipse cx="60" cy="104" rx="15" ry="19" class="miembros-cuerpo" />
+            <circle cx="49" cy="126" r="15" class="miembros-cuerpo" />
+            <line x1="49" y1="126" x2="67" y2="50" class="miembros-cuerpo" stroke-width="20" />
+            <circle cx="67" cy="50" r="15" class="miembros-cuerpo" />
+            <path d="M74,72 L62,66" class="miembros-detalle" />
+            <path d="M70,82 L58,76" class="miembros-detalle" />
           </g>
           <g class="miembros-parte">
             <line x1="118" y1="196" x2="130" y2="258" class="miembros-cuerpo" stroke-width="30" />
@@ -86,6 +94,12 @@ function seccionMiembros() {
             <circle cx="70" cy="258" r="15" class="miembros-cuerpo" />
             <line x1="70" y1="258" x2="76" y2="312" class="miembros-cuerpo" stroke-width="22" />
             <ellipse cx="76" cy="317" rx="18" ry="9" class="miembros-cuerpo" />
+          </g>
+          <g class="miembros-parte">
+            <path d="M73,190 L127,190 L138,232 L62,232 Z" class="miembros-cuerpo" />
+            <path d="M75,193 L125,193" class="miembros-detalle" />
+            <path d="M64,231 L136,231" class="miembros-detalle" />
+            <path d="M100,195 L100,229" class="miembros-detalle" />
           </g>
         </svg>
         ${MIEMBROS.map((m, i) => m.puntos.map(p => `

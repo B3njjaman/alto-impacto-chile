@@ -16,9 +16,9 @@
   --gris: #9a99a1;
   --borde: #26262e;
 
-  /* Big Shoulders Display para titulares de impacto, Oswald para
-     etiquetas y botones, Inter para lectura clara en pantalla. */
-  --fuente-display: "Big Shoulders Display", "Arial Narrow", sans-serif;
+  /* Anton para titulares de máximo impacto, Oswald para etiquetas
+     y botones, Inter para lectura clara en pantalla. */
+  --fuente-display: "Anton", "Arial Narrow", sans-serif;
   --fuente-condensada: "Oswald", "Arial Narrow", sans-serif;
   --fuente-texto: "Inter", "Segoe UI", sans-serif;
 
@@ -66,7 +66,7 @@ a { color: inherit; }
 
 h1, h2, h3 {
   font-family: var(--fuente-display);
-  font-weight: 800;
+  font-weight: 400;
   text-transform: uppercase;
   line-height: 1.05;
   letter-spacing: -0.01em;
@@ -243,15 +243,16 @@ h1, h2, h3 {
 }
 
 .heroe h1 {
-  font-size: clamp(2.7rem, 7.5vw, 5.4rem);
-  font-weight: 900;
-  font-style: italic;
-  letter-spacing: -0.02em;
+  font-size: clamp(2.9rem, 8vw, 5.8rem);
+  font-weight: 400;
+  letter-spacing: -0.01em;
   max-width: 12ch;
   margin: 1.2rem 0 1.4rem;
-  padding-right: 0.08em; /* la cursiva no se corta en el borde */
 }
-.heroe h1 .acento { color: var(--rojo-vivo); }
+.heroe h1 .acento {
+  color: var(--rojo-vivo);
+  text-shadow: 0 0 30px rgba(201, 34, 64, 0.65), 0 0 60px rgba(201, 34, 64, 0.35);
+}
 
 .heroe p {
   max-width: 48ch;
@@ -304,8 +305,7 @@ h1, h2, h3 {
 }
 .marquee span {
   font-family: var(--fuente-display);
-  font-weight: 900;
-  font-style: italic;
+  font-weight: 400;
   text-transform: uppercase;
   font-size: 1.45rem;
   letter-spacing: 0.04em;
@@ -417,11 +417,14 @@ h1, h2, h3 {
   stroke: var(--hueso);
   stroke-linecap: round;
 }
-.miembros-mongkon {
+/* Líneas negras de definición: capucha, pecho/abdomen, vendaje de
+   muñecas y costuras del short — blanco y negro, como el logo. */
+.miembros-detalle {
   fill: none;
-  stroke: var(--oro);
-  stroke-width: 5;
+  stroke: var(--negro);
+  stroke-width: 2.5;
   stroke-linecap: round;
+  opacity: 0.75;
 }
 
 /* La zona clickeable (44px, cómoda para mouse y dedo) es más grande
@@ -696,8 +699,7 @@ table.horario tr:nth-child(even) td { background: var(--carbon-claro); }
 }
 .llamado h2 {
   font-size: clamp(2rem, 5vw, 3.4rem);
-  font-weight: 900;
-  font-style: italic;
+  font-weight: 400;
   margin: 0 auto 1rem;
   max-width: 18ch;
 }
