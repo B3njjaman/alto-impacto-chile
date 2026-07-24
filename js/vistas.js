@@ -109,33 +109,45 @@ const SILUETA_CUERPO = "M126 0 Q153 0 149.5 2 Q146 4 151 9 Q156 14 155 17.5 Q154
 
 const SILUETA_SHORT = "M272 116 Q277 128 278.5 147 Q280 166 268.5 173.5 Q257 181 253 177.5 Q249 174 244 179 Q239 184 234 191 Q229 198 232.5 202 Q236 206 229 222 Q222 238 228 243 Q234 248 233.5 250 Q233 252 225 264.5 Q217 277 212.5 277 Q208 277 205.5 274.5 Q203 272 201 274 Q199 276 195 260.5 Q191 245 190.5 232 Q190 219 180 211 Q170 203 173 196.5 Q176 190 173.5 186 Q171 182 184.5 170 Q198 158 207 140.5 Q216 123 219.5 125 Q223 127 228.5 125 Q234 123 236.5 125.5 Q239 128 253 116 Z";
 
-// Los ocho puntos de contacto, en coordenadas de la silueta.
-const OCHO_PUNTOS = [
-  { arma: "Puños", x: 150, y: 52 },
-  { arma: "Puños", x: 232, y: 54 },
-  { arma: "Codos", x: 102, y: 100 },
-  { arma: "Codos", x: 228, y: 96 },
-  { arma: "Rodillas", x: 300, y: 152 },
-  { arma: "Rodillas", x: 196, y: 282 },
-  { arma: "Piernas", x: 325, y: 214 },
-  { arma: "Piernas", x: 188, y: 352 },
-];
-
 // Guantes: en la foto son negros y neutros, así que la máscara por
 // temperatura los deja fuera. Se dibujan aparte, que además es lo que
-// permite darles el azul de la paleta.
+// permite darles el azul de la paleta. Cada uno lleva su inclinación
+// para seguir la línea del antebrazo en guardia.
 const GUANTES = [
-  { x: 150, y: 52 },
-  { x: 232, y: 54 },
+  { x: 146, y: 66, rot: -14 },
+  { x: 216, y: 66, rot: 16 },
 ];
+
+// Brazos en guardia. La foto trazada funde los brazos con el torso, así
+// que se dibujan explícitos: cada uno va del hombro al codo y del codo
+// al puño. El puño coincide con el centro del guante.
+const BRAZOS = {
+  izq: {
+    hombro: { x: 116, y: 120 },
+    codo: { x: 92, y: 120 },
+    puno: { x: 146, y: 66 },
+  },
+  der: {
+    hombro: { x: 194, y: 116 },
+    codo: { x: 216, y: 121 },
+    puno: { x: 216, y: 66 },
+  },
+};
 
 function figuraOchoPuntos() {
   return `
   <figure class="ocho-figura">
     <svg class="ocho-figura-svg" viewBox="55 -6 320 434" role="img"
-      aria-label="Luchador de Muay Thai lanzando una rodilla, con los ocho puntos de contacto señalados sobre el cuerpo">
+      aria-label="Luchador de Muay Thai lanzando una rodilla">
 
       <path class="fig-piel" d="${SILUETA_CUERPO}"/>
+
+      <!-- Brazos en guardia, sobre el torso. Antebrazo más fino que el brazo. -->
+      <path class="fig-brazo" style="stroke-width:24" d="M${BRAZOS.izq.hombro.x} ${BRAZOS.izq.hombro.y} L${BRAZOS.izq.codo.x} ${BRAZOS.izq.codo.y}"/>
+      <path class="fig-brazo" style="stroke-width:19" d="M${BRAZOS.izq.codo.x} ${BRAZOS.izq.codo.y} L${BRAZOS.izq.puno.x} ${BRAZOS.izq.puno.y}"/>
+      <path class="fig-brazo" style="stroke-width:24" d="M${BRAZOS.der.hombro.x} ${BRAZOS.der.hombro.y} L${BRAZOS.der.codo.x} ${BRAZOS.der.codo.y}"/>
+      <path class="fig-brazo" style="stroke-width:19" d="M${BRAZOS.der.codo.x} ${BRAZOS.der.codo.y} L${BRAZOS.der.puno.x} ${BRAZOS.der.puno.y}"/>
+
       <path class="fig-short" d="${SILUETA_SHORT}"/>
 
       <!-- Al cerrar la máscara para tapar el hueco de los guantes, la
@@ -149,19 +161,11 @@ function figuraOchoPuntos() {
       <path class="fig-mongkhon-cinta" d="M95 50 Q86 64 90 80"/>
 
       ${GUANTES.map(g => `
-      <g transform="translate(${g.x} ${g.y})">
-        <path class="fig-guante" d="M-19 2 Q-21 -20 -3 -23 Q17 -22 18 -1 Q19 15 4 18 Q-15 19 -19 2 Z"/>
-        <path class="fig-guante" d="M-18 -4 q-10 3 -9 12 q2 9 10 7 z"/>
-        <path class="fig-venda" d="M-14 16 q14 6 28 0 l2 10 q-16 7 -33 0 z"/>
+      <g transform="translate(${g.x} ${g.y}) rotate(${g.rot})">
+        <path class="fig-guante" d="M-11 -3 Q-12 -15 0 -16 Q12 -15 11 -3 L11 9 Q12 17 0 18 Q-12 17 -11 9 Z"/>
+        <path class="fig-guante" d="M-11 1 q-8 2 -6 9 q2 6 7 4 z"/>
+        <path class="fig-venda" d="M-11 11 Q0 15 11 11 L12 19 Q0 24 -12 19 Z"/>
       </g>`).join("")}
-
-      <g class="ocho-marcas">
-        ${OCHO_PUNTOS.map(p => `
-        <g class="ocho-marca" data-arma="${p.arma}">
-          <circle class="ocho-marca-halo" cx="${p.x}" cy="${p.y}" r="7"/>
-          <circle class="ocho-marca-punto" cx="${p.x}" cy="${p.y}" r="7"/>
-        </g>`).join("")}
-      </g>
     </svg>
   </figure>`;
 }
@@ -174,7 +178,7 @@ function panelOchoMiembros() {
         <h2 class="ocho-titulo">El arte de los ocho miembros</h2>
         <dl class="ocho-armas">
           ${OCHO_ARMAS.map(a => `
-          <div class="ocho-arma" data-arma="${a.nombre}">
+          <div class="ocho-arma">
             <dt>${a.nombre}</dt>
             <dd><span data-contador="${a.cantidad}">${a.cantidad}</span><small>armas</small></dd>
           </div>`).join("")}

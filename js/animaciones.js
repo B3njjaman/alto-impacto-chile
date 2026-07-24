@@ -249,66 +249,18 @@ const ANIM = (() => {
     animarFigura(bloque);
   }
 
-  // --- Figura con los ocho puntos ----------------------------
-  // La foto entra, las marcas caen una a una sobre el cuerpo y después
-  // queda viva: una onda recorre los ocho puntos en bucle. Pasar por
-  // un arma de la leyenda resalta sus dos marcas.
+  // --- Figura del luchador -----------------------------------
+  // Entra por partes al aparecer en pantalla.
   function animarFigura(bloque) {
     const figura = bloque.querySelector(".ocho-figura");
     if (!figura) return;
 
     const cuerpo = figura.querySelectorAll(
-      ".fig-piel, .fig-short, .fig-corte, .fig-mongkhon, .fig-mongkhon-cinta, .fig-guante, .fig-venda"
+      ".fig-piel, .fig-brazo, .fig-short, .fig-corte, .fig-mongkhon, .fig-mongkhon-cinta, .fig-guante, .fig-venda"
     );
-    const marcas = gsap.utils.toArray(figura.querySelectorAll(".ocho-marca"));
-    const puntos = figura.querySelectorAll(".ocho-marca-punto");
-    const halos = figura.querySelectorAll(".ocho-marca-halo");
-
-    // Se anima el radio y no la escala: en SVG, GSAP escribe su propio
-    // transform-origin en línea y pisa al `transform-box` del CSS, con
-    // lo que las marcas escaladas se van de sitio.
-    gsap.set(puntos, { attr: { r: 0 } });
 
     gsap.timeline(alEntrar(bloque))
-      .from(cuerpo, { opacity: 0, duration: 0.9, ease: "power2.out", stagger: 0.05 })
-      .to(puntos, { attr: { r: 7 }, duration: 0.5, ease: "back.out(2.6)", stagger: 0.09 }, 0.7);
-
-    // Onda que recorre los ocho puntos, uno tras otro.
-    const onda = gsap.timeline({ repeat: -1, repeatDelay: 1.1, delay: 2.2 });
-    halos.forEach((halo, i) => {
-      onda.fromTo(
-        halo,
-        { attr: { r: 6 }, opacity: 0.85 },
-        { attr: { r: 24 }, opacity: 0, duration: 1, ease: "power2.out" },
-        i * 0.13
-      );
-    });
-    limpiezas.push(() => onda.kill());
-
-    // Vínculo con la leyenda: resalta el par y apaga el resto.
-    bloque.querySelectorAll(".ocho-arma[data-arma]").forEach((celda) => {
-      const propias = marcas.filter((m) => m.dataset.arma === celda.dataset.arma);
-      const otras = marcas.filter((m) => m.dataset.arma !== celda.dataset.arma);
-      if (!propias.length) return;
-
-      const entrar = () => {
-        gsap.to(propias.map((m) => m.querySelector(".ocho-marca-punto")), {
-          attr: { r: 12 }, duration: 0.35, ease: "back.out(2)", overwrite: true,
-        });
-        gsap.to(otras, { opacity: 0.2, duration: 0.3, overwrite: true });
-      };
-      const salir = () => {
-        gsap.to(puntos, { attr: { r: 7 }, duration: 0.35, overwrite: true });
-        gsap.to(marcas, { opacity: 1, duration: 0.35, overwrite: true });
-      };
-
-      celda.addEventListener("pointerenter", entrar);
-      celda.addEventListener("pointerleave", salir);
-      limpiezas.push(() => {
-        celda.removeEventListener("pointerenter", entrar);
-        celda.removeEventListener("pointerleave", salir);
-      });
-    });
+      .from(cuerpo, { opacity: 0, duration: 0.9, ease: "power2.out", stagger: 0.05 });
   }
 
   // --- Tarjetas: inclinación que sigue al puntero -------------
@@ -402,15 +354,6 @@ const ANIM = (() => {
         gsap.to(el, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out", overwrite: true });
       }
     });
-
-    const figura = document.querySelector(".ocho-figura");
-    if (figura && figura.getBoundingClientRect().top < limite) {
-      const dormidos = [...figura.querySelectorAll(".ocho-marca-punto")]
-        .filter((p) => Number(p.getAttribute("r")) === 0);
-      if (dormidos.length) {
-        gsap.to(dormidos, { attr: { r: 7 }, duration: 0.4, ease: "back.out(2.4)", stagger: 0.07 });
-      }
-    }
   }
 
   // --- Ciclo de vida, llamado por el router -------------------

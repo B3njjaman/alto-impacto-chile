@@ -621,6 +621,12 @@ h1, h2, h3 {
 /* El cuerpo en hueso, el short en el rojo de la bandera y los
    guantes oscuros: los mismos colores del logo. */
 .fig-piel { fill: var(--hueso); }
+.fig-brazo {
+  fill: none;
+  stroke: var(--hueso);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
 
 /* Las prendas van en los colores secundarios de la paleta: azul de
    la bandera para short y guantes, dorado para el mongkhon. */
@@ -635,28 +641,6 @@ h1, h2, h3 {
 }
 .fig-mongkhon { fill: var(--oro); }
 .fig-mongkhon-cinta { fill: none; stroke: var(--oro); stroke-width: 4; stroke-linecap: round; }
-
-/* Cada marca escala sobre su propio centro. */
-.ocho-marca {
-  transform-box: fill-box;
-  transform-origin: center;
-}
-.ocho-marca-punto {
-  fill: var(--rojo-vivo);
-  stroke: var(--negro);
-  stroke-width: 3;
-}
-.ocho-marca-halo {
-  fill: none;
-  stroke: var(--rojo-vivo);
-  stroke-width: 1.5;
-  opacity: 0;
-  transform-box: fill-box;
-  transform-origin: center;
-}
-
-/* La leyenda señala sus dos marcas al pasar por encima. */
-.ocho-arma[data-arma] { cursor: default; }
 
 @media (max-width: 980px) {
   .ocho-interior { grid-template-columns: 1fr; justify-items: center; }
