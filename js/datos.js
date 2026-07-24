@@ -34,8 +34,29 @@ const DATOS = {
   ],
   notaHorario: "Horario referencial. Confírmalo por Instagram antes de tu primera visita.",
 
+  // --- Video del héroe ---------------------------------------
+  // Reemplázalo por un video propio de la escuela cuando exista.
+  videoHero: "assets/videos/hero-clase.mp4",
+  posterHero: "assets/fotos/hero-sparring.jpg",
+  videoClases: "assets/videos/clase-grupal.mp4",
+
   // --- Galería local -----------------------------------------
-  // Deja fotos en assets/galeria/ y agrégalas aquí, por ejemplo:
-  // { archivo: "assets/galeria/entrenamiento-01.jpg", alt: "Trabajo de pads en clase" },
-  galeria: [],
+  // FOTOS REFERENCIALES de banco libre (Pexels, uso comercial gratuito).
+  // Reemplázalas por fotos reales de la escuela: deja los archivos en
+  // assets/fotos/ o assets/galeria/ y actualiza esta lista.
+  galeria: [
+    { archivo: "assets/fotos/hero-sparring.jpg", alt: "Sparring de Muay Thai en el ring" },
+    { archivo: "assets/fotos/clase-grupal.jpg", alt: "Alumna y entrenador practicando rodillazos" },
+    { archivo: "assets/fotos/vendas.jpg", alt: "Peleador colocándose las vendas" },
+    { archivo: "assets/fotos/sparring-tecnica.jpg", alt: "Trabajo técnico de sparring" },
+    { archivo: "assets/fotos/ring-bn.jpg", alt: "Combate en blanco y negro" },
+    { archivo: "assets/fotos/entrenamiento-dinamico.jpg", alt: "Entrenamiento dinámico en el gimnasio" },
+    { archivo: "assets/fotos/estiramiento-ring.jpg", alt: "Estiramiento y movilidad en el ring" },
+    { archivo: "assets/fotos/sparring-intenso.jpg", alt: "Sparring de intensidad controlada" },
+    { archivo: "assets/fotos/combate-bangkok.jpg", alt: "Combate de Muay Thai en Bangkok" },
+    { archivo: "assets/fotos/ring-gimnasio.jpg", alt: "Ring del gimnasio" },
+    { archivo: "assets/fotos/arena-combate.jpg", alt: "Combate en arena" },
+    { archivo: "assets/fotos/kickboxing-tecnica.jpg", alt: "Técnica de patada en kickboxing" },
+  ],
+  creditoFotos: "Fotografía referencial de banco (Pexels) mientras reunimos las fotos propias de la escuela.",
 };
