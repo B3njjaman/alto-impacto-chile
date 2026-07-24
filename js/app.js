@@ -1,5 +1,5 @@
 // ============================================================
-// APP — comportamiento global: menú, reveals, embeds, contacto
+// APP — menú, animaciones GSAP, embeds de Instagram y contacto
 // ============================================================
 
 // --- Menú móvil ---------------------------------------------
@@ -10,12 +10,102 @@ menuBoton.addEventListener("click", () => {
   menuBoton.setAttribute("aria-expanded", String(abierto));
 });
 
-// --- Animaciones de aparición (respetan reduced motion) ------
+// --- Motor de animaciones -------------------------------------
+// Con GSAP + ScrollTrigger si están disponibles; si no (o si el
+// usuario prefiere menos movimiento), fallback a CSS puro.
 const prefiereQuieto = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const hayGsap = typeof window.gsap !== "undefined" && typeof window.ScrollTrigger !== "undefined";
 
-function activarReveals() {
+if (hayGsap && !prefiereQuieto) {
+  gsap.registerPlugin(ScrollTrigger);
+  document.documentElement.classList.add("gsap-activo");
+}
+
+function animarVista() {
+  // Los videos de fondo se detienen si el usuario prefiere quietud.
+  if (prefiereQuieto) {
+    document.querySelectorAll("video[autoplay]").forEach((v) => {
+      v.removeAttribute("autoplay");
+      v.pause();
+    });
+  }
+
+  if (!hayGsap || prefiereQuieto) {
+    activarRevealsFallback();
+    return;
+  }
+
+  // Limpia los triggers de la vista anterior.
+  ScrollTrigger.getAll().forEach((t) => t.kill());
+
+  // Transición de entrada de la vista.
+  // OJO: opacity, no autoAlpha — visibility se hereda y contaminaría los
+  // valores que capturan los from() de más abajo en este mismo tick.
+  gsap.fromTo("#app", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" });
+
+  // --- Héroe: secuencia de entrada + parallax ---
+  const heroe = document.querySelector(".heroe");
+  if (heroe) {
+    const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+    tl.from(".heroe .eyebrow", { x: -28, opacity: 0, duration: 0.5 })
+      .from(".heroe h1 .linea", { yPercent: 115, skewY: 5, duration: 0.75, stagger: 0.12 }, "-=0.2")
+      .from(".heroe-parrafo", { opacity: 0, y: 20, duration: 0.5 }, "-=0.35")
+      .from(".heroe-acciones .boton", { opacity: 0, y: 16, stagger: 0.08, duration: 0.4 }, "-=0.25")
+      .from(".heroe-logo", { opacity: 0, scale: 0.85, rotation: -6, duration: 0.9, ease: "back.out(1.6)" }, "-=0.55");
+
+    gsap.to(".heroe-media video", {
+      yPercent: 12,
+      ease: "none",
+      scrollTrigger: { trigger: heroe, start: "top top", end: "bottom top", scrub: true },
+    });
+    gsap.fromTo(".heroe-interior",
+      { yPercent: 0, opacity: 1 },
+      { yPercent: -8, opacity: 0.35, ease: "none",
+        scrollTrigger: { trigger: heroe, start: "top top", end: "bottom top", scrub: true } }
+    );
+  }
+
+  // --- Reveals al hacer scroll ---
+  ScrollTrigger.batch(".reveal", {
+    start: "top 88%",
+    once: true,
+    onEnter: (els) =>
+      gsap.fromTo(
+        els,
+        { autoAlpha: 0, y: 30 },
+        { autoAlpha: 1, y: 0, duration: 0.7, stagger: 0.1, ease: "power2.out", overwrite: true }
+      ),
+  });
+
+  // --- Banda de fotos: deriva horizontal con el scroll ---
+  document.querySelectorAll(".banda").forEach((banda) => {
+    const pista = banda.querySelector(".banda-pista");
+    if (!pista) return;
+    gsap.fromTo(
+      pista,
+      { x: 0 },
+      { x: () => -(pista.scrollWidth - banda.offsetWidth || 200) * 0.35, ease: "none",
+        scrollTrigger: { trigger: banda, start: "top bottom", end: "bottom top", scrub: 1 } }
+    );
+  });
+
+  // --- Fotos con marco: leve zoom-out al aparecer ---
+  document.querySelectorAll(".foto-marco img").forEach((img) => {
+    gsap.fromTo(
+      img,
+      { scale: 1.15 },
+      { scale: 1, ease: "none",
+        scrollTrigger: { trigger: img, start: "top 95%", end: "top 30%", scrub: 1 } }
+    );
+  });
+
+  ScrollTrigger.refresh();
+}
+
+// Fallback sin GSAP: IntersectionObserver + clase .visible.
+function activarRevealsFallback() {
   const elementos = document.querySelectorAll(".reveal");
-  if (prefiereQuieto || !("IntersectionObserver" in window)) {
+  if (!("IntersectionObserver" in window) || prefiereQuieto) {
     elementos.forEach((el) => el.classList.add("visible"));
     return;
   }
@@ -34,8 +124,6 @@ function activarReveals() {
 }
 
 // --- Embeds oficiales de Instagram ---------------------------
-// Carga embed.js una sola vez y re-procesa los blockquotes al
-// cambiar de vista.
 let embedCargado = false;
 function procesarEmbedsInstagram() {
   if (!document.querySelector(".instagram-media")) return;

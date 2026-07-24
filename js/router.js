@@ -29,7 +29,7 @@ function renderizar() {
 
   window.scrollTo({ top: 0, behavior: "instant" });
 
-  activarReveals();
+  animarVista();
   procesarEmbedsInstagram();
 }
 
