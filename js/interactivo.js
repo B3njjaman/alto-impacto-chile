@@ -165,6 +165,7 @@ function activarCursorPersonalizado() {
     if (e.target.closest("a, button, .boton, summary")) {
       cursor.classList.add("activo");
       gsap.to(cursor, { scale: 1.9, duration: 0.35, ease: "elastic.out(1, 0.4)" });
+      crearChispas(e.clientX, e.clientY);
     }
   });
   document.addEventListener("mouseout", (e) => {
@@ -173,6 +174,32 @@ function activarCursorPersonalizado() {
       gsap.to(cursor, { scale: 1, duration: 0.3, ease: "power2.out" });
     }
   });
+}
+
+// Ráfaga corta de chispas alrededor del cursor al "conectar" con un
+// elemento interactivo. Pocas, chicas y breves para no estorbar.
+function crearChispas(x, y) {
+  const cantidad = 6;
+  for (let i = 0; i < cantidad; i++) {
+    const chispa = document.createElement("span");
+    chispa.className = "cursor-chispa";
+    chispa.style.left = `${x}px`;
+    chispa.style.top = `${y}px`;
+    document.body.appendChild(chispa);
+    gsap.set(chispa, { xPercent: -50, yPercent: -50 });
+
+    const angulo = (Math.PI * 2 * i) / cantidad + (Math.random() - 0.5) * 0.6;
+    const distancia = 16 + Math.random() * 12;
+    gsap.to(chispa, {
+      x: Math.cos(angulo) * distancia,
+      y: Math.sin(angulo) * distancia,
+      opacity: 0,
+      scale: 0.3,
+      duration: 0.45 + Math.random() * 0.2,
+      ease: "power2.out",
+      onComplete: () => chispa.remove(),
+    });
+  }
 }
 
 // Impacto en los CTA principales: rebote de escala + un anillo que
