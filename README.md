@@ -40,14 +40,23 @@ lo que pongas en `video` dentro de **`js/datos.js`**:
 |---|---|
 | `archivo: "assets/video/entrenamiento.mp4"` | El video en bucle, sin sonido, como fondo en movimiento |
 | `youtube: "ID_DEL_VIDEO"` | La portada del video; el reproductor se carga recién al pulsar play, así la página no arrastra el peso de YouTube desde el inicio |
-| Ambos vacíos (por defecto) | El panel **arte de los ocho miembros**: las cuatro armas con sus cifras y un diagrama animado |
+| Ambos vacíos (por defecto) | El panel **arte de los ocho miembros**: las cuatro armas con sus cifras y la figura del luchador |
 
 Así la sección nunca se ve vacía, tengas o no material grabado.
 
-El diagrama del panel se genera en `js/vistas.js` calculando las posiciones (nada de
-coordenadas escritas a mano): ocho marcas repartidas en el anillo y unidas de dos en dos por
-el centro, o sea los cuatro pares de armas. GSAP dibuja los anillos recorriendo su perímetro
-y después lo deja vivo, con el anillo punteado girando y un pulso que recorre los ocho puntos.
+### La figura de los ocho miembros
+
+Un luchador dibujado en vector plano, en el mismo lenguaje del logo: cuerpo en hueso, short
+en el rojo de la bandera y guantes oscuros, lanzando una rodilla.
+
+No es una imagen: se genera en `js/vistas.js` a partir de un **esqueleto** de articulaciones
+(`ESQUELETO`). De ahí salen tanto los trazos de las extremidades como las ocho marcas, así
+que cada punto de contacto cae exactamente sobre su articulación por construcción, no a ojo.
+Mover una junta mueve las dos cosas a la vez.
+
+GSAP monta el cuerpo por partes, deja caer las marcas una a una y después lo mantiene vivo
+con una onda que recorre los ocho puntos. Pasar el puntero por un arma de la leyenda resalta
+sus dos marcas y apaga el resto.
 
 ## 🎬 Librerías dinámicas
 

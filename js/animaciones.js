@@ -200,6 +200,17 @@ const ANIM = (() => {
     });
   }
 
+  // Si el bloque ya está en pantalla cuando se monta la vista, la
+  // animación arranca de una vez. Un ScrollTrigger `once` sobre algo
+  // que ya quedó por encima de la línea de disparo no llega a
+  // ejecutarse nunca y el contenido se queda en su estado inicial.
+  function alEntrar(bloque, retraso = 0) {
+    const yaVisible = bloque.getBoundingClientRect().top < window.innerHeight * 0.85;
+    return yaVisible
+      ? { delay: retraso }
+      : { scrollTrigger: { trigger: bloque, start: "top 82%", once: true } };
+  }
+
   // --- Bloque destacado (video o panel de los ocho miembros) --
   function animarDestacado() {
     const bloque = document.querySelector("[data-destacado]");
@@ -216,7 +227,7 @@ const ANIM = (() => {
         duration: 1.1,
         ease: "power3.out",
         clearProps: "clipPath",
-        scrollTrigger: { trigger: bloque, start: "top 85%", once: true },
+        ...alEntrar(bloque),
       }
     );
 
@@ -231,75 +242,73 @@ const ANIM = (() => {
         duration: 0.7,
         ease: "power3.out",
         stagger: 0.08,
-        scrollTrigger: { trigger: bloque, start: "top 78%", once: true },
+        ...alEntrar(bloque, 0.15),
       });
     }
 
-    animarDiagrama(bloque);
+    animarFigura(bloque);
   }
 
-  // --- Diagrama de los ocho puntos ---------------------------
-  // Se dibuja al entrar en pantalla y después queda vivo: el anillo
-  // punteado gira despacio y un pulso recorre los ocho puntos.
-  function animarDiagrama(bloque) {
-    const svg = bloque.querySelector(".diagrama");
-    if (!svg) return;
+  // --- Figura con los ocho puntos ----------------------------
+  // La foto entra, las marcas caen una a una sobre el cuerpo y después
+  // queda viva: una onda recorre los ocho puntos en bucle. Pasar por
+  // un arma de la leyenda resalta sus dos marcas.
+  function animarFigura(bloque) {
+    const figura = bloque.querySelector(".ocho-figura");
+    if (!figura) return;
 
-    const anillos = svg.querySelectorAll(".diagrama-anillo, .diagrama-anillo-giro");
-    const pares = svg.querySelectorAll(".diagrama-par");
-    const puntos = svg.querySelectorAll(".diagrama-punto");
-    const nucleo = svg.querySelector(".diagrama-nucleo");
-    const textos = svg.querySelectorAll(".diagrama-cifra, .diagrama-pie");
+    const cuerpo = figura.querySelectorAll(
+      ".fig-hueso, .fig-torso, .fig-cabeza, .fig-pie, .fig-short, .fig-cinturon, .fig-guante"
+    );
+    const marcas = gsap.utils.toArray(figura.querySelectorAll(".ocho-marca"));
+    const puntos = figura.querySelectorAll(".ocho-marca-punto");
+    const halos = figura.querySelectorAll(".ocho-marca-halo");
 
-    // Los anillos se dibujan recorriendo su propio perímetro.
-    anillos.forEach((anillo) => {
-      const largo = anillo.getTotalLength();
-      gsap.set(anillo, { strokeDasharray: largo, strokeDashoffset: largo });
+    // Se anima el radio y no la escala: en SVG, GSAP escribe su propio
+    // transform-origin en línea y pisa al `transform-box` del CSS, con
+    // lo que las marcas escaladas se van de sitio.
+    gsap.set(puntos, { attr: { r: 0 } });
+
+    gsap.timeline(alEntrar(bloque))
+      .from(cuerpo, { opacity: 0, duration: 0.9, ease: "power2.out", stagger: 0.05 })
+      .to(puntos, { attr: { r: 7 }, duration: 0.5, ease: "back.out(2.6)", stagger: 0.09 }, 0.7);
+
+    // Onda que recorre los ocho puntos, uno tras otro.
+    const onda = gsap.timeline({ repeat: -1, repeatDelay: 1.1, delay: 2.2 });
+    halos.forEach((halo, i) => {
+      onda.fromTo(
+        halo,
+        { attr: { r: 6 }, opacity: 0.85 },
+        { attr: { r: 24 }, opacity: 0, duration: 1, ease: "power2.out" },
+        i * 0.13
+      );
     });
+    limpiezas.push(() => onda.kill());
 
-    const trazo = gsap.timeline({
-      scrollTrigger: { trigger: bloque, start: "top 80%", once: true },
+    // Vínculo con la leyenda: resalta el par y apaga el resto.
+    bloque.querySelectorAll(".ocho-arma[data-arma]").forEach((celda) => {
+      const propias = marcas.filter((m) => m.dataset.arma === celda.dataset.arma);
+      const otras = marcas.filter((m) => m.dataset.arma !== celda.dataset.arma);
+      if (!propias.length) return;
+
+      const entrar = () => {
+        gsap.to(propias.map((m) => m.querySelector(".ocho-marca-punto")), {
+          attr: { r: 12 }, duration: 0.35, ease: "back.out(2)", overwrite: true,
+        });
+        gsap.to(otras, { opacity: 0.2, duration: 0.3, overwrite: true });
+      };
+      const salir = () => {
+        gsap.to(puntos, { attr: { r: 7 }, duration: 0.35, overwrite: true });
+        gsap.to(marcas, { opacity: 1, duration: 0.35, overwrite: true });
+      };
+
+      celda.addEventListener("pointerenter", entrar);
+      celda.addEventListener("pointerleave", salir);
+      limpiezas.push(() => {
+        celda.removeEventListener("pointerenter", entrar);
+        celda.removeEventListener("pointerleave", salir);
+      });
     });
-
-    trazo
-      .to(anillos, {
-        strokeDashoffset: 0,
-        duration: 1.4,
-        ease: "power2.inOut",
-        stagger: 0.15,
-        // El anillo punteado recupera su patrón al terminar el trazo.
-        onComplete: () => gsap.set(svg.querySelector(".diagrama-anillo-giro"), { clearProps: "strokeDasharray,strokeDashoffset" }),
-      })
-      // svgOrigin, no transformOrigin: en SVG el segundo se mide sobre
-      // la caja del propio elemento, y aquí el pivote es el centro del
-      // dibujo, por donde pasan todos los pares.
-      .from(pares, { scale: 0, svgOrigin: "210 210", duration: 0.8, ease: "power3.out", stagger: 0.1 }, 0.5)
-      .from(puntos, { attr: { r: 0 }, duration: 0.6, ease: "back.out(2.5)", stagger: 0.07 }, 0.9)
-      .from(nucleo, { attr: { r: 0 }, duration: 0.7, ease: "back.out(1.8)" }, 1.1)
-      .from(textos, { opacity: 0, duration: 0.6, stagger: 0.1 }, 1.4);
-
-    // Giro continuo del anillo punteado.
-    const giro = gsap.to(svg.querySelector(".diagrama-anillo-giro"), {
-      rotation: 360,
-      svgOrigin: "210 210",
-      duration: 70,
-      ease: "none",
-      repeat: -1,
-    });
-
-    // Pulso que recorre los ocho puntos, uno tras otro.
-    const pulso = gsap.timeline({ repeat: -1, repeatDelay: 0.8, delay: 2 });
-    puntos.forEach((punto, i) => {
-      pulso.to(punto, {
-        attr: { r: 12 },
-        duration: 0.3,
-        ease: "sine.inOut",
-        yoyo: true,
-        repeat: 1,
-      }, i * 0.15);
-    });
-
-    limpiezas.push(() => { giro.kill(); pulso.kill(); });
   }
 
   // --- Tarjetas: inclinación que sigue al puntero -------------
@@ -378,6 +387,32 @@ const ANIM = (() => {
     });
   }
 
+  // --- Red de seguridad --------------------------------------
+  // Repartir los reveals entre "ya visible" y "más abajo" depende de
+  // que el scroll esté en cero cuando se monta la vista, y eso no
+  // siempre se cumple: Lenis aplica su posición en el frame siguiente
+  // y el alto del documento cambia al reemplazar el contenido. Si algo
+  // quedó invisible estando en pantalla, se muestra igual. Nada de
+  // contenido escondido por una animación que no llegó a dispararse.
+  function asegurarVisibles() {
+    const limite = window.innerHeight;
+
+    gsap.utils.toArray(".reveal").forEach((el) => {
+      if (el.getBoundingClientRect().top < limite && gsap.getProperty(el, "opacity") === 0) {
+        gsap.to(el, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out", overwrite: true });
+      }
+    });
+
+    const figura = document.querySelector(".ocho-figura");
+    if (figura && figura.getBoundingClientRect().top < limite) {
+      const dormidos = [...figura.querySelectorAll(".ocho-marca-punto")]
+        .filter((p) => Number(p.getAttribute("r")) === 0);
+      if (dormidos.length) {
+        gsap.to(dormidos, { attr: { r: 7 }, duration: 0.4, ease: "back.out(2.4)", stagger: 0.07 });
+      }
+    }
+  }
+
   // --- Ciclo de vida, llamado por el router -------------------
   function montar() {
     montarCarruseles();
@@ -392,6 +427,8 @@ const ANIM = (() => {
     animarTarjetas();
     animarContadores();
     ScrollTrigger.refresh();
+    gsap.delayedCall(0.4, asegurarVisibles);
+    gsap.delayedCall(1.4, asegurarVisibles);
   }
 
   function desmontar() {
@@ -405,9 +442,13 @@ const ANIM = (() => {
   }
 
   // Los embeds de Instagram cambian de alto al hidratarse: hay que
-  // recalcular las posiciones de ScrollTrigger cuando eso pasa.
+  // recalcular las posiciones de ScrollTrigger cuando eso pasa. El
+  // reacomodo puede empujar bloques por encima de su línea de
+  // disparo, así que se pasa también la red de seguridad.
   function recalcular() {
-    if (animar) ScrollTrigger.refresh();
+    if (!animar) return;
+    ScrollTrigger.refresh();
+    asegurarVisibles();
   }
 
   return { iniciarScrollSuave, montar, desmontar, irArriba, bloquearScroll, recalcular };

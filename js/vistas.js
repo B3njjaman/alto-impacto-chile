@@ -94,44 +94,97 @@ const OCHO_ARMAS = [
   { nombre: "Piernas", cantidad: 2 },
 ];
 
-// Diagrama de los ocho puntos de contacto: ocho marcas en el anillo
-// unidas de dos en dos por el centro, o sea cuatro pares. Las
-// posiciones se calculan aquí para no escribir coordenadas a mano.
-function diagramaOchoPuntos() {
-  const centro = 210;
-  const radio = 132;
+// ---------- Figura de los ocho miembros ----------
+// Luchador dibujado en vector plano, en el lenguaje del logo: cuerpo
+// en hueso, short rojo de la bandera, guantes oscuros. El esqueleto
+// está en ESQUELETO y de ahí salen tanto los trazos de las
+// extremidades como las marcas, así que cada punto cae exactamente
+// sobre su articulación. Mover una junta mueve las dos cosas.
 
-  const marcas = Array.from({ length: 8 }, (_, i) => {
-    const angulo = (-90 + i * 45) * (Math.PI / 180);
-    return {
-      x: +(centro + radio * Math.cos(angulo)).toFixed(1),
-      y: +(centro + radio * Math.sin(angulo)).toFixed(1),
-    };
-  });
+const ESQUELETO = {
+  cabeza: { x: 158, y: 62, rx: 25, ry: 27 },
+  cuello: { x: 162, y: 88 },
+  hombroIzq: { x: 136, y: 118 },
+  hombroDer: { x: 196, y: 112 },
+  // Guardia escalonada, como en la foto: una mano a la altura del
+  // mentón y la otra más arriba. A la misma altura los dos guantes
+  // enmarcan la cara y el conjunto se lee como un par de ojos.
+  codoIzq: { x: 98, y: 164 },
+  codoDer: { x: 228, y: 142 },
+  punoIzq: { x: 112, y: 114 },
+  punoDer: { x: 206, y: 88 },
+  caderaIzq: { x: 156, y: 202 },
+  caderaDer: { x: 194, y: 198 },
+  rodillaApoyo: { x: 150, y: 310 },
+  tobilloApoyo: { x: 146, y: 408 },
+  rodillaGolpe: { x: 300, y: 188 },
+  tobilloGolpe: { x: 352, y: 292 },
+};
 
-  const pares = [0, 1, 2, 3]
-    .map((i) => {
-      const a = marcas[i];
-      const b = marcas[i + 4];
-      return `<line class="diagrama-par" x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}"/>`;
-    })
-    .join("");
+// Punto medio entre dos juntas, para poner la marca de la espinilla
+// en mitad del hueso y no sobre una articulación.
+function medio(a, b, t = 0.5) {
+  return { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t };
+}
 
-  const puntos = marcas
-    .map((m) => `<circle class="diagrama-punto" cx="${m.x}" cy="${m.y}" r="7"/>`)
-    .join("");
+const OCHO_PUNTOS = [
+  { arma: "Puños", ...ESQUELETO.punoIzq },
+  { arma: "Puños", ...ESQUELETO.punoDer },
+  { arma: "Codos", ...ESQUELETO.codoIzq },
+  { arma: "Codos", ...ESQUELETO.codoDer },
+  { arma: "Rodillas", ...ESQUELETO.rodillaGolpe },
+  { arma: "Rodillas", ...ESQUELETO.rodillaApoyo },
+  { arma: "Piernas", ...medio(ESQUELETO.rodillaGolpe, ESQUELETO.tobilloGolpe, 0.55) },
+  { arma: "Piernas", ...medio(ESQUELETO.rodillaApoyo, ESQUELETO.tobilloApoyo, 0.55) },
+];
+
+function figuraOchoPuntos() {
+  const e = ESQUELETO;
+  const linea = (...juntas) => juntas.map((j, i) => `${i ? "L" : "M"}${j.x} ${j.y}`).join(" ");
 
   return `
-  <svg class="diagrama" viewBox="0 0 420 420" role="img"
-    aria-label="Diagrama de los ocho puntos de contacto del Muay Thai, agrupados en cuatro pares">
-    <circle class="diagrama-anillo" cx="210" cy="210" r="176"/>
-    <circle class="diagrama-anillo-giro" cx="210" cy="210" r="156"/>
-    <g class="diagrama-pares">${pares}</g>
-    <g class="diagrama-puntos">${puntos}</g>
-    <circle class="diagrama-nucleo" cx="210" cy="210" r="48"/>
-    <text class="diagrama-cifra" x="210" y="205" data-contador="8">8</text>
-    <text class="diagrama-pie" x="210" y="232">Miembros</text>
-  </svg>`;
+  <figure class="ocho-figura">
+    <svg class="ocho-figura-svg" viewBox="85 18 305 428" role="img"
+      aria-label="Luchador de Muay Thai lanzando una rodilla, con los ocho puntos de contacto señalados sobre el cuerpo">
+
+      <g class="fig-miembros">
+        <!-- Piernas: muslo grueso, pantorrilla más fina -->
+        <path class="fig-hueso fig-muslo" d="${linea(e.caderaIzq, e.rodillaApoyo)}"/>
+        <path class="fig-hueso fig-pantorrilla" d="${linea(e.rodillaApoyo, e.tobilloApoyo)}"/>
+        <path class="fig-hueso fig-muslo" d="${linea(e.caderaDer, e.rodillaGolpe)}"/>
+        <path class="fig-hueso fig-pantorrilla" d="${linea(e.rodillaGolpe, e.tobilloGolpe)}"/>
+        <!-- Brazos en guardia: codo abajo y afuera, puño junto a la cara -->
+        <path class="fig-hueso fig-brazo" d="${linea(e.hombroIzq, e.codoIzq, e.punoIzq)}"/>
+        <path class="fig-hueso fig-brazo" d="${linea(e.hombroDer, e.codoDer, e.punoDer)}"/>
+        <path class="fig-hueso fig-cuello" d="${linea(e.cabeza, e.cuello)}"/>
+      </g>
+
+      <!-- Pie de apoyo plano; el de la pierna que golpea, en punta -->
+      <path class="fig-pie" d="M132 400 q-14 10 -14 20 q0 8 10 8 l42 0 q9 0 8 -8 q-2 -10 -18 -16 z"/>
+      <path class="fig-pie" d="M338 282 q24 12 40 34 q6 9 -3 14 q-10 5 -16 -4 q-12 -18 -30 -27 z"/>
+
+      <!-- Torso, con el pecho más ancho que la cintura -->
+      <path class="fig-torso" d="M133 122 Q140 104 166 102 Q194 100 200 118 L204 200 L150 206 Z"/>
+      <ellipse class="fig-cabeza" cx="${e.cabeza.x}" cy="${e.cabeza.y}" rx="${e.cabeza.rx}" ry="${e.cabeza.ry}"/>
+
+      <!-- Short: la prenda que trae el rojo del logo. Ceñido a la
+           cadera y abierto sobre el muslo que sube. -->
+      <path class="fig-short" d="M141 186 L203 180 Q239 184 250 196 L243 219 Q211 206 197 209 L189 236 L143 240 Q134 212 141 186 Z"/>
+
+      <!-- Guantes -->
+      <circle class="fig-guante" cx="${e.punoIzq.x}" cy="${e.punoIzq.y}" r="16"/>
+      <circle class="fig-guante" cx="${e.punoDer.x}" cy="${e.punoDer.y}" r="16"/>
+
+      <!-- Las ocho marcas, colocadas desde el mismo esqueleto -->
+      <g class="ocho-marcas">
+        ${OCHO_PUNTOS.map(p => `
+        <g class="ocho-marca" data-arma="${p.arma}">
+          <circle class="ocho-marca-halo" cx="${p.x}" cy="${p.y}" r="7"/>
+          <circle class="ocho-marca-punto" cx="${p.x}" cy="${p.y}" r="7"/>
+        </g>`).join("")}
+      </g>
+    </svg>
+  </figure>`;
 }
 
 function panelOchoMiembros() {
@@ -142,7 +195,7 @@ function panelOchoMiembros() {
         <h2 class="ocho-titulo">El arte de los ocho miembros</h2>
         <dl class="ocho-armas">
           ${OCHO_ARMAS.map(a => `
-          <div class="ocho-arma">
+          <div class="ocho-arma" data-arma="${a.nombre}">
             <dt>${a.nombre}</dt>
             <dd><span data-contador="${a.cantidad}">${a.cantidad}</span><small>armas</small></dd>
           </div>`).join("")}
@@ -153,7 +206,7 @@ function panelOchoMiembros() {
           se entrena en cada clase, paso a paso y sin apuro.
         </p>
       </div>
-      ${diagramaOchoPuntos()}
+      ${figuraOchoPuntos()}
     </div>
   </div>`;
 }
