@@ -13,30 +13,34 @@ const VALORES = [
 ];
 
 // Las cuatro armas del Muay Thai, cada una por partida doble (dos
-// puntos en el diagrama por fila = los "ocho miembros").
+// puntos en el diagrama por fila = los "ocho miembros"). Coordenadas
+// en % sobre el viewBox 200×340 de la silueta en seccionMiembros().
 const MIEMBROS = [
   {
     nombre: "Puños",
     texto: "Jab, cruzado y ganchos. La base de toda combinación: miden distancia, abren camino y preparan el golpe siguiente.",
-    puntos: [[37.5, 26.8], [62.5, 26.8]],
+    puntos: [[66, 14.7], [34, 14.7]],
   },
   {
     nombre: "Codos",
     texto: "El arma de corta distancia. Cortes, golpes descendentes y horizontales — de las técnicas más temidas del Muay Thai en el clinch.",
-    puntos: [[25, 33.9], [75, 33.9]],
+    puntos: [[74, 37.6], [26, 37.6]],
   },
   {
     nombre: "Rodillas",
     texto: "Directas, en clinch o voladoras. Generan un daño enorme con muy poco espacio: el arma favorita en la distancia media.",
-    puntos: [[32.5, 75], [67.5, 75]],
+    puntos: [[65, 75.9], [35, 75.9]],
   },
   {
     nombre: "Piernas",
     texto: "La patada circular de espinilla, sello del arte tailandés: la potencia nace de la cadera, no del pie.",
-    puntos: [[33.5, 83.9], [66, 83.9]],
+    puntos: [[63.5, 83.8], [36.5, 83.8]],
   },
 ];
 
+// Silueta original en pose de guardia, con mongkon — construida con
+// formas simples (líneas gruesas de puntas redondeadas + círculos),
+// en el mismo tono --hueso que el luchador del héroe.
 function seccionMiembros() {
   return `
   <section class="seccion">
@@ -46,19 +50,43 @@ function seccionMiembros() {
 
     <div class="miembros">
       <div class="miembros-figura-envoltura">
-        <svg class="miembros-figura" viewBox="0 0 200 280" aria-hidden="true">
-          <line x1="100" y1="50" x2="100" y2="150" class="miembros-hueso" />
-          <line x1="70" y1="58" x2="130" y2="58" class="miembros-hueso" />
-          <line x1="75" y1="150" x2="125" y2="150" class="miembros-hueso" />
-          <line x1="70" y1="58" x2="50" y2="95" class="miembros-hueso" />
-          <line x1="50" y1="95" x2="75" y2="75" class="miembros-hueso" />
-          <line x1="130" y1="58" x2="150" y2="95" class="miembros-hueso" />
-          <line x1="150" y1="95" x2="125" y2="75" class="miembros-hueso" />
-          <line x1="75" y1="150" x2="65" y2="210" class="miembros-hueso" />
-          <line x1="65" y1="210" x2="67" y2="235" class="miembros-hueso" />
-          <line x1="125" y1="150" x2="135" y2="210" class="miembros-hueso" />
-          <line x1="135" y1="210" x2="132" y2="235" class="miembros-hueso" />
-          <circle cx="100" cy="32" r="16" class="miembros-cabeza" />
+        <svg class="miembros-figura" viewBox="0 0 200 340" aria-hidden="true">
+          <g class="miembros-parte">
+            <ellipse cx="100" cy="20" rx="14" ry="8" class="miembros-mongkon" />
+            <path d="M112,22 Q124,40 118,65" class="miembros-mongkon" />
+          </g>
+          <g class="miembros-parte">
+            <circle cx="100" cy="52" r="20" class="miembros-cuerpo" />
+          </g>
+          <g class="miembros-parte">
+            <path d="M68,68 L132,68 L120,192 L80,192 Z" class="miembros-cuerpo" />
+          </g>
+          <g class="miembros-parte">
+            <line x1="118" y1="80" x2="132" y2="50" class="miembros-cuerpo" stroke-width="24" />
+            <line x1="126" y1="90" x2="148" y2="128" class="miembros-cuerpo" stroke-width="26" />
+            <circle cx="148" cy="128" r="14" class="miembros-cuerpo" />
+            <line x1="148" y1="128" x2="132" y2="50" class="miembros-cuerpo" stroke-width="20" />
+            <circle cx="132" cy="50" r="15" class="miembros-cuerpo" />
+          </g>
+          <g class="miembros-parte">
+            <line x1="82" y1="80" x2="68" y2="50" class="miembros-cuerpo" stroke-width="24" />
+            <line x1="74" y1="90" x2="52" y2="128" class="miembros-cuerpo" stroke-width="26" />
+            <circle cx="52" cy="128" r="14" class="miembros-cuerpo" />
+            <line x1="52" y1="128" x2="68" y2="50" class="miembros-cuerpo" stroke-width="20" />
+            <circle cx="68" cy="50" r="15" class="miembros-cuerpo" />
+          </g>
+          <g class="miembros-parte">
+            <line x1="118" y1="196" x2="130" y2="258" class="miembros-cuerpo" stroke-width="30" />
+            <circle cx="130" cy="258" r="15" class="miembros-cuerpo" />
+            <line x1="130" y1="258" x2="124" y2="312" class="miembros-cuerpo" stroke-width="22" />
+            <ellipse cx="124" cy="317" rx="18" ry="9" class="miembros-cuerpo" />
+          </g>
+          <g class="miembros-parte">
+            <line x1="82" y1="196" x2="70" y2="258" class="miembros-cuerpo" stroke-width="30" />
+            <circle cx="70" cy="258" r="15" class="miembros-cuerpo" />
+            <line x1="70" y1="258" x2="76" y2="312" class="miembros-cuerpo" stroke-width="22" />
+            <ellipse cx="76" cy="317" rx="18" ry="9" class="miembros-cuerpo" />
+          </g>
         </svg>
         ${MIEMBROS.map((m, i) => m.puntos.map(p => `
         <button class="miembros-punto" style="left:${p[0]}%; top:${p[1]}%" data-indice="${i}" type="button" aria-label="${m.nombre}"></button>`).join("")).join("")}
@@ -173,6 +201,26 @@ function preguntasFrecuentes() {
   </section>`;
 }
 
+// Pastillas de acceso directo: para quien ya leyó todo el Inicio y
+// solo quiere saltar a un dato puntual. Van abajo, cerca del cierre,
+// no arriba — así no invitan a saltarse el resto de la historia.
+function accesosDirectos() {
+  const enlaces = [
+    { texto: "Nuestra escuela", ruta: "/nosotros" },
+    { texto: "Cómo se entrena", ruta: "/clases" },
+    { texto: "Horarios", ruta: "/horarios" },
+    { texto: "Galería", ruta: "/galeria" },
+    { texto: "Contacto", ruta: "/contacto" },
+  ];
+  return `
+  <section class="seccion" style="text-align:center">
+    <p class="eyebrow reveal" style="justify-content:center">¿Buscas algo puntual?</p>
+    <div class="accesos reveal">
+      ${enlaces.map(e => `<a class="acceso" href="#${e.ruta}">${e.texto}</a>`).join("")}
+    </div>
+  </section>`;
+}
+
 const VISTAS = {
 
   // ---------- INICIO ----------
@@ -251,6 +299,8 @@ const VISTAS = {
     ${cintaThai()}
 
     ${preguntasFrecuentes()}
+
+    ${accesosDirectos()}
 
     ${llamadoFinal()}
     `,
@@ -462,6 +512,12 @@ const VISTAS = {
           <a class="boton boton-borde" href="${DATOS.instagram.url}" target="_blank" rel="noopener">@${DATOS.instagram.usuario}</a>
         </div>
       </div>
+
+      ${DATOS.ubicacion && DATOS.ubicacion.consulta ? `
+      <div class="mapa-envoltura reveal">
+        <iframe class="mapa" src="https://maps.google.com/maps?q=${encodeURIComponent(DATOS.ubicacion.consulta)}&output=embed" loading="lazy" title="Ubicación de ${DATOS.nombre}" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        ${!DATOS.ubicacion.confirmada ? `<p class="mapa-nota">Ubicación referencial. Confirma la dirección exacta por Instagram.</p>` : ""}
+      </div>` : ""}
     </section>
 
     ${cintaThai()}

@@ -45,6 +45,8 @@ function renderizar(esCambioDeRuta) {
     // al click/hover exista o no GSAP: es la función de la sección,
     // no solo su animación de entrada.
     activarPuntosMiembros();
+
+    actualizarProgresoSecciones(ruta);
   };
 
   const puedeAnimar = gsapListo();
@@ -80,6 +82,19 @@ function irASeccion(direccion) {
   const siguiente = indice + direccion;
   if (indice === -1 || siguiente < 0 || siguiente >= ORDEN_RUTAS.length) return;
   window.location.hash = `#${ORDEN_RUTAS[siguiente]}`;
+}
+
+// Puntitos fijos (solo escritorio): en qué sección estás y acceso
+// directo a cualquier otra con un click. Viven fuera de #app, así
+// que se enganchan una sola vez.
+document.querySelectorAll(".progreso-punto").forEach((p) => {
+  p.addEventListener("click", () => { window.location.hash = `#${p.dataset.ruta}`; });
+});
+
+function actualizarProgresoSecciones(ruta) {
+  document.querySelectorAll(".progreso-punto").forEach((p) => {
+    p.classList.toggle("activo", p.dataset.ruta === ruta);
+  });
 }
 
 document.addEventListener("keydown", (e) => {

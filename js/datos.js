@@ -39,4 +39,14 @@ const DATOS = {
   // cuando hay al menos un testimonio cargado aquí. Ejemplo:
   // { nombre: "Nombre Apellido", texto: "Lo que dijo el alumno.", estrellas: 5 },
   testimonios: [],
+
+  // --- Ubicación -------------------------------------------------
+  // "consulta" es lo que se busca en el mapa. Por ahora solo la
+  // ciudad (dato real). Cuando tengas la dirección exacta, reemplaza
+  // "consulta" por algo como "Av. Ejemplo 1234, Ñuñoa, Santiago" y
+  // cambia "confirmada" a true (eso saca la nota de "referencial").
+  ubicacion: {
+    consulta: "Santiago, Chile",
+    confirmada: false,
+  },
 };

@@ -235,30 +235,26 @@ function activarImpactoCTA() {
   });
 }
 
-// Diagrama de "Los ocho miembros": el esqueleto se dibuja trazo a
-// trazo al entrar en pantalla, y los puntos aparecen con un rebote.
-// Los clicks/hover de cada punto se enganchan en activarPuntosMiembros().
+// Diagrama de "Los ocho miembros": el luchador se "arma" por partes
+// (cabeza, torso, cada brazo, cada pierna) con un rebote, y los
+// puntos aparecen al final. Los clicks/hover de cada punto se
+// enganchan por separado en activarPuntosMiembros().
 function animarMiembros() {
   const contenedor = document.querySelector(".miembros");
   if (!contenedor) return;
 
-  const trazos = contenedor.querySelectorAll(".miembros-hueso, .miembros-cabeza");
-  trazos.forEach((t) => {
-    const largo = t.getTotalLength ? t.getTotalLength() : 100;
-    gsap.set(t, { strokeDasharray: largo, strokeDashoffset: largo });
-  });
-
+  const partes = contenedor.querySelectorAll(".miembros-parte");
   const tl = gsap.timeline({
     scrollTrigger: { trigger: contenedor, start: "top 85%", once: true },
   });
-  tl.to(trazos, { strokeDashoffset: 0, duration: 1, stagger: 0.06, ease: "power2.inOut" })
+  tl.from(partes, { opacity: 0, scale: 0.4, transformOrigin: "50% 50%", duration: 0.55, stagger: 0.09, ease: "back.out(1.8)" })
     .from(contenedor.querySelectorAll(".miembros-punto"), {
       scale: 0,
       opacity: 0,
       duration: 0.4,
-      stagger: 0.08,
+      stagger: 0.06,
       ease: "back.out(2)",
-    }, "-=0.3")
+    }, "-=0.25")
     .from(".miembros-info", { opacity: 0, y: 16, duration: 0.5 }, "-=0.2");
 }
 
