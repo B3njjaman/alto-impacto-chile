@@ -50,9 +50,16 @@ Un luchador dibujado en vector plano, en el mismo lenguaje del logo: cuerpo en h
 en el rojo de la bandera y guantes oscuros, lanzando una rodilla.
 
 No es una imagen: se genera en `js/vistas.js` a partir de un **esqueleto** de articulaciones
-(`ESQUELETO`). De ahí salen tanto los trazos de las extremidades como las ocho marcas, así
+(`ESQUELETO`). De ahí salen tanto los contornos de las extremidades como las ocho marcas, así
 que cada punto de contacto cae exactamente sobre su articulación por construcción, no a ojo.
 Mover una junta mueve las dos cosas a la vez.
+
+Las extremidades no son trazos de grosor fijo —un tubo uniforme siempre se lee a maniquí—:
+la función `miembro()` genera el contorno recorriendo las juntas por un costado con los
+grosores dados y volviendo por el otro, de modo que se estrechan en las articulaciones y
+engordan en el vientre del músculo. Encima van los **cortes de sombra**, que sugieren
+pectoral, abdomen, deltoides, rótulas y gemelos: eso es lo que separa un cuerpo de una
+silueta.
 
 GSAP monta el cuerpo por partes, deja caer las marcas una a una y después lo mantiene vivo
 con una onda que recorre los ocho puntos. Pasar el puntero por un arma de la leyenda resalta

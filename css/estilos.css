@@ -620,20 +620,17 @@ h1, h2, h3 {
 
 /* El cuerpo en hueso, el short en el rojo de la bandera y los
    guantes oscuros: los mismos colores del logo. */
-.fig-hueso {
-  fill: none;
-  stroke: var(--hueso);
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-.fig-muslo { stroke-width: 36; }
-.fig-pantorrilla { stroke-width: 26; }
-.fig-brazo { stroke-width: 21; }
-.fig-cuello { stroke-width: 20; }
+.fig-piel { fill: var(--hueso); }
 
-.fig-torso,
-.fig-cabeza,
-.fig-pie { fill: var(--hueso); }
+/* Los cortes son lo que separa un cuerpo de una silueta: sugieren
+   pectoral, abdomen, deltoides y rótulas sin dibujar músculos. */
+.fig-sombra {
+  fill: none;
+  stroke: #c4beb1;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  opacity: 0.9;
+}
 
 .fig-short { fill: var(--rojo); }
 
@@ -641,7 +638,9 @@ h1, h2, h3 {
   fill: var(--negro);
   stroke: var(--hueso);
   stroke-width: 3;
+  stroke-linejoin: round;
 }
+.fig-venda { fill: var(--hueso); }
 
 /* Cada marca escala sobre su propio centro. */
 .ocho-marca {

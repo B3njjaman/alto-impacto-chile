@@ -257,9 +257,7 @@ const ANIM = (() => {
     const figura = bloque.querySelector(".ocho-figura");
     if (!figura) return;
 
-    const cuerpo = figura.querySelectorAll(
-      ".fig-hueso, .fig-torso, .fig-cabeza, .fig-pie, .fig-short, .fig-cinturon, .fig-guante"
-    );
+    const cuerpo = figura.querySelectorAll(".fig-piel, .fig-sombra, .fig-short, .fig-guante, .fig-venda");
     const marcas = gsap.utils.toArray(figura.querySelectorAll(".ocho-marca"));
     const puntos = figura.querySelectorAll(".ocho-marca-punto");
     const halos = figura.querySelectorAll(".ocho-marca-halo");
