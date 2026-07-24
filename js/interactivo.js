@@ -1,9 +1,12 @@
 // ============================================================
 // INTERACTIVO — animaciones con GSAP: aparición al hacer scroll,
-// entrada del héroe, botones magnéticos y parallax del logo.
+// entrada del héroe, botones magnéticos, cursor personalizado,
+// nav líquida, cinta tailandesa animada e impacto en los CTA.
 // Se degrada sin ruido si GSAP no carga o si el usuario prefiere
 // menos movimiento: activarReveals() (en app.js) toma el control.
 // ============================================================
+
+let primerRenderNav = true;
 
 function gsapListo() {
   return !!(window.gsap && window.ScrollTrigger) && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -15,10 +18,18 @@ function activarInteracciones() {
   if (!gsap.core.globals().ScrollTrigger) gsap.registerPlugin(ScrollTrigger);
   document.documentElement.classList.add("gsap-listo");
 
+  // #app se reemplaza entero en cada render: cualquier ScrollTrigger
+  // de la vista anterior quedó apuntando a nodos ya removidos.
+  ScrollTrigger.getAll().forEach((st) => st.kill());
+
   animarRevelados();
   animarHeroe();
   animarBotonesMagneticos();
   animarParallaxHeroe();
+  animarCintaThai();
+  moverIndicadorNav();
+  activarCursorPersonalizado();
+  activarImpactoCTA();
 }
 
 // Aparición al hacer scroll: reemplaza el fade plano por un
@@ -86,5 +97,112 @@ function animarParallaxHeroe() {
     yPercent: 22,
     ease: "none",
     scrollTrigger: { trigger: ".heroe", start: "top top", end: "bottom top", scrub: true },
+  });
+}
+
+// La cinta tailandesa se "despliega" franja por franja, como una
+// bandera abriéndose, en vez de aparecer de golpe.
+function animarCintaThai() {
+  document.querySelectorAll(".cinta").forEach((svg) => {
+    const paths = svg.querySelectorAll("path");
+    if (!paths.length) return;
+    gsap.fromTo(
+      paths,
+      { scaleX: 0, transformOrigin: "0% 50%" },
+      {
+        scaleX: 1,
+        duration: 0.7,
+        stagger: 0.12,
+        ease: "power3.out",
+        scrollTrigger: { trigger: svg, start: "top 92%", once: true },
+      }
+    );
+  });
+}
+
+// Barra líquida bajo el link activo de la navegación: se desliza en
+// vez de aparecer/desaparecer seca. Solo en el layout de escritorio.
+function moverIndicadorNav() {
+  const indicador = document.getElementById("navIndicador");
+  const nav = document.getElementById("navegacion");
+  const activo = nav && nav.querySelector("a.activo");
+  if (!indicador || !nav || !activo || window.matchMedia("(max-width: 900px)").matches) return;
+
+  const rectActivo = activo.getBoundingClientRect();
+  const rectNav = nav.getBoundingClientRect();
+  const destino = { left: rectActivo.left - rectNav.left, width: rectActivo.width };
+
+  if (primerRenderNav) {
+    gsap.set(indicador, destino);
+    primerRenderNav = false;
+  } else {
+    gsap.to(indicador, { ...destino, duration: 0.5, ease: "elastic.out(1, 0.75)" });
+  }
+}
+
+// Cursor a la medida: un anillo dorado que sigue el mouse y se
+// "estampa" en rojo al pasar sobre algo interactivo — la marca
+// Alto Impacto, literalmente, en el propio cursor. Se activa una
+// sola vez; solo en dispositivos con mouse (pointer: fine).
+function activarCursorPersonalizado() {
+  if (!window.matchMedia("(pointer: fine)").matches) return;
+  if (document.documentElement.classList.contains("cursor-listo")) return;
+
+  const cursor = document.getElementById("cursorImpacto");
+  if (!cursor) return;
+  document.documentElement.classList.add("cursor-listo");
+
+  gsap.set(cursor, { xPercent: -50, yPercent: -50 });
+  const moverX = gsap.quickTo(cursor, "x", { duration: 0.45, ease: "power3.out" });
+  const moverY = gsap.quickTo(cursor, "y", { duration: 0.45, ease: "power3.out" });
+
+  document.addEventListener("mousemove", (e) => {
+    moverX(e.clientX);
+    moverY(e.clientY);
+  });
+
+  document.addEventListener("mouseover", (e) => {
+    if (e.target.closest("a, button, .boton, summary")) {
+      cursor.classList.add("activo");
+      gsap.to(cursor, { scale: 1.9, duration: 0.35, ease: "elastic.out(1, 0.4)" });
+    }
+  });
+  document.addEventListener("mouseout", (e) => {
+    if (e.target.closest("a, button, .boton, summary")) {
+      cursor.classList.remove("activo");
+      gsap.to(cursor, { scale: 1, duration: 0.3, ease: "power2.out" });
+    }
+  });
+}
+
+// Impacto en los CTA principales: rebote de escala + un anillo que
+// se expande y se apaga al hacer click, como un golpe conectando.
+// En móviles con soporte, se suma una vibración corta.
+function activarImpactoCTA() {
+  document.querySelectorAll(".boton-rojo").forEach((boton) => {
+    if (boton.dataset.impacto) return;
+    boton.dataset.impacto = "1";
+    boton.addEventListener("click", () => {
+      gsap.timeline()
+        .to(boton, { scale: 0.9, duration: 0.08, ease: "power1.out" })
+        .to(boton, { scale: 1.08, duration: 0.18, ease: "back.out(3)" })
+        .to(boton, { scale: 1, duration: 0.15 });
+
+      const rect = boton.getBoundingClientRect();
+      const anillo = document.createElement("span");
+      anillo.className = "impacto-anillo";
+      anillo.style.left = `${rect.left + rect.width / 2}px`;
+      anillo.style.top = `${rect.top + rect.height / 2}px`;
+      document.body.appendChild(anillo);
+      gsap.to(anillo, {
+        scale: 3.2,
+        opacity: 0,
+        duration: 0.5,
+        ease: "power2.out",
+        onComplete: () => anillo.remove(),
+      });
+
+      if (navigator.vibrate) navigator.vibrate(12);
+    });
   });
 }

@@ -68,7 +68,7 @@ function llamadoFinal() {
 function franjaConfianza() {
   const items = ["Sin experiencia previa", "A tu propio ritmo", "Comunidad y respeto ante todo"];
   return `
-  <ul class="confianza reveal">
+  <ul class="confianza">
     ${items.map(i => `<li>${i}</li>`).join("")}
   </ul>`;
 }

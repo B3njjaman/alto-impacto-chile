@@ -160,7 +160,7 @@ h1, h2, h3 {
   color: var(--rojo-vivo);
 }
 
-.navegacion { display: flex; gap: 0.25rem; }
+.navegacion { position: relative; display: flex; gap: 0.25rem; }
 .navegacion a {
   font-family: var(--fuente-condensada);
   font-weight: 600;
@@ -175,6 +175,25 @@ h1, h2, h3 {
 }
 .navegacion a:hover { color: var(--hueso); }
 .navegacion a.activo { color: var(--hueso); box-shadow: inset 0 -2px 0 var(--rojo); }
+
+/* Barra líquida: solo reemplaza el box-shadow de arriba cuando GSAP
+   la puede animar (ver interactivo.js); si no, el box-shadow manda. */
+.navegacion-indicador {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  width: 0;
+  background: var(--rojo);
+  border-radius: 2px;
+  pointer-events: none;
+  opacity: 0;
+}
+.gsap-listo .navegacion-indicador { opacity: 1; }
+.gsap-listo .navegacion a.activo { box-shadow: none; }
+@media (max-width: 900px) {
+  .navegacion-indicador { display: none; }
+}
 
 .menu-boton {
   display: none;
@@ -715,6 +734,56 @@ table.horario tr:nth-child(even) td { background: var(--carbon-claro); }
   box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.35);
 }
 .cta-movil:hover { background: var(--rojo-vivo); }
+
+/* ---------- Cursor personalizado "Alto Impacto" ---------- */
+/* Anillo dorado que sigue el mouse; al pasar sobre un elemento
+   interactivo se "estampa": se rellena de rojo y rebota, como un
+   golpe conectando. Ver interactivo.js. Solo en desktop con mouse. */
+
+.cursor-impacto {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--oro);
+  background: transparent;
+  pointer-events: none;
+  z-index: 300;
+  transition: background 0.15s, border-color 0.15s;
+}
+.cursor-listo .cursor-impacto { display: block; }
+.cursor-listo, .cursor-listo * { cursor: none !important; }
+.cursor-impacto.activo { background: var(--rojo-vivo); border-color: var(--rojo-vivo); }
+
+.impacto-anillo {
+  position: fixed;
+  width: 16px;
+  height: 16px;
+  margin-left: -8px;
+  margin-top: -8px;
+  border-radius: 50%;
+  border: 2px solid var(--oro);
+  pointer-events: none;
+  z-index: 300;
+}
+
+/* ---------- Cortina de transición (bandera tailandesa) ---------- */
+
+.cortina-transicion {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+}
+.cortina-transicion .franja { flex: 1; transform: translateX(-100%); }
+.franja-roja { background: var(--rojo); }
+.franja-hueso { background: var(--hueso); }
+.franja-azul { background: var(--azul); }
 
 /* ---------- Animaciones de aparición ---------- */
 

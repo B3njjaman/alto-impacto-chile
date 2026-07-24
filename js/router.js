@@ -44,7 +44,14 @@ function renderizar(esCambioDeRuta) {
 
   const puedeAnimar = gsapListo();
   if (esCambioDeRuta && puedeAnimar) {
-    gsap.to(app, { opacity: 0, y: -10, duration: 0.2, ease: "power1.in", onComplete: dibujar });
+    // Cortina con los colores de la bandera tailandesa: barre la
+    // pantalla, cambia el contenido debajo y sigue de largo.
+    const franjas = document.querySelectorAll(".cortina-transicion .franja");
+    gsap.timeline()
+      .to(franjas, { xPercent: 0, duration: 0.35, stagger: 0.05, ease: "power2.inOut" })
+      .call(dibujar)
+      .to(franjas, { xPercent: 100, duration: 0.35, stagger: 0.05, ease: "power2.inOut" }, "+=0.05")
+      .set(franjas, { xPercent: -100 });
   } else {
     dibujar();
   }
