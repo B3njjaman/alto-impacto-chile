@@ -12,6 +12,65 @@ const VALORES = [
   { nombre: "Persistencia", texto: "Valoramos el proceso, el aprendizaje continuo y la capacidad de no rendirse." },
 ];
 
+// Las cuatro armas del Muay Thai, cada una por partida doble (dos
+// puntos en el diagrama por fila = los "ocho miembros").
+const MIEMBROS = [
+  {
+    nombre: "Puños",
+    texto: "Jab, cruzado y ganchos. La base de toda combinación: miden distancia, abren camino y preparan el golpe siguiente.",
+    puntos: [[37.5, 26.8], [62.5, 26.8]],
+  },
+  {
+    nombre: "Codos",
+    texto: "El arma de corta distancia. Cortes, golpes descendentes y horizontales — de las técnicas más temidas del Muay Thai en el clinch.",
+    puntos: [[25, 33.9], [75, 33.9]],
+  },
+  {
+    nombre: "Rodillas",
+    texto: "Directas, en clinch o voladoras. Generan un daño enorme con muy poco espacio: el arma favorita en la distancia media.",
+    puntos: [[32.5, 75], [67.5, 75]],
+  },
+  {
+    nombre: "Piernas",
+    texto: "La patada circular de espinilla, sello del arte tailandés: la potencia nace de la cadera, no del pie.",
+    puntos: [[33.5, 83.9], [66, 83.9]],
+  },
+];
+
+function seccionMiembros() {
+  return `
+  <section class="seccion">
+    <p class="eyebrow reveal">Muay Thai</p>
+    <h2 class="reveal">El arte de los ocho miembros</h2>
+    <p class="seccion-intro reveal">Cuatro armas, cada una por partida doble: dos puños, dos codos, dos rodillas, dos piernas — ocho puntos de contacto. Toca o pasa el cursor sobre cada punto.</p>
+
+    <div class="miembros">
+      <div class="miembros-figura-envoltura">
+        <svg class="miembros-figura" viewBox="0 0 200 280" aria-hidden="true">
+          <line x1="100" y1="50" x2="100" y2="150" class="miembros-hueso" />
+          <line x1="70" y1="58" x2="130" y2="58" class="miembros-hueso" />
+          <line x1="75" y1="150" x2="125" y2="150" class="miembros-hueso" />
+          <line x1="70" y1="58" x2="50" y2="95" class="miembros-hueso" />
+          <line x1="50" y1="95" x2="75" y2="75" class="miembros-hueso" />
+          <line x1="130" y1="58" x2="150" y2="95" class="miembros-hueso" />
+          <line x1="150" y1="95" x2="125" y2="75" class="miembros-hueso" />
+          <line x1="75" y1="150" x2="65" y2="210" class="miembros-hueso" />
+          <line x1="65" y1="210" x2="67" y2="235" class="miembros-hueso" />
+          <line x1="125" y1="150" x2="135" y2="210" class="miembros-hueso" />
+          <line x1="135" y1="210" x2="132" y2="235" class="miembros-hueso" />
+          <circle cx="100" cy="32" r="16" class="miembros-cabeza" />
+        </svg>
+        ${MIEMBROS.map((m, i) => m.puntos.map(p => `
+        <button class="miembros-punto" style="left:${p[0]}%; top:${p[1]}%" data-indice="${i}" type="button" aria-label="${m.nombre}"></button>`).join("")).join("")}
+      </div>
+      <div class="miembros-info" id="miembrosInfo">
+        <h3>${MIEMBROS[0].nombre}</h3>
+        <p>${MIEMBROS[0].texto}</p>
+      </div>
+    </div>
+  </section>`;
+}
+
 // Cinta divisoria inspirada en la bandera tailandesa del logo.
 function cintaThai() {
   return `
@@ -162,6 +221,8 @@ const VISTAS = {
         </article>
       </div>
     </section>
+
+    ${seccionMiembros()}
 
     <div class="seccion-oscura-envoltura">
       <section class="seccion">

@@ -40,6 +40,11 @@ function renderizar(esCambioDeRuta) {
     } else {
       activarReveals();
     }
+
+    // Los puntos del diagrama de los ocho miembros deben responder
+    // al click/hover exista o no GSAP: es la función de la sección,
+    // no solo su animación de entrada.
+    activarPuntosMiembros();
   };
 
   const puedeAnimar = gsapListo();

@@ -30,6 +30,7 @@ function activarInteracciones() {
   moverIndicadorNav();
   activarCursorPersonalizado();
   activarImpactoCTA();
+  animarMiembros();
 }
 
 // Aparición al hacer scroll: reemplaza el fade plano por un
@@ -231,5 +232,55 @@ function activarImpactoCTA() {
 
       if (navigator.vibrate) navigator.vibrate(12);
     });
+  });
+}
+
+// Diagrama de "Los ocho miembros": el esqueleto se dibuja trazo a
+// trazo al entrar en pantalla, y los puntos aparecen con un rebote.
+// Los clicks/hover de cada punto se enganchan en activarPuntosMiembros().
+function animarMiembros() {
+  const contenedor = document.querySelector(".miembros");
+  if (!contenedor) return;
+
+  const trazos = contenedor.querySelectorAll(".miembros-hueso, .miembros-cabeza");
+  trazos.forEach((t) => {
+    const largo = t.getTotalLength ? t.getTotalLength() : 100;
+    gsap.set(t, { strokeDasharray: largo, strokeDashoffset: largo });
+  });
+
+  const tl = gsap.timeline({
+    scrollTrigger: { trigger: contenedor, start: "top 85%", once: true },
+  });
+  tl.to(trazos, { strokeDashoffset: 0, duration: 1, stagger: 0.06, ease: "power2.inOut" })
+    .from(contenedor.querySelectorAll(".miembros-punto"), {
+      scale: 0,
+      opacity: 0,
+      duration: 0.4,
+      stagger: 0.08,
+      ease: "back.out(2)",
+    }, "-=0.3")
+    .from(".miembros-info", { opacity: 0, y: 16, duration: 0.5 }, "-=0.2");
+}
+
+// Los puntos son fijos por render (recreados junto al resto de #app),
+// así que se pueden atar sin guardas de "ya enganchado".
+function activarPuntosMiembros() {
+  const info = document.getElementById("miembrosInfo");
+  const puntos = document.querySelectorAll(".miembros-punto");
+  if (!info || !puntos.length) return;
+
+  const mostrar = (indice) => {
+    const m = MIEMBROS[indice];
+    if (!m) return;
+    puntos.forEach((p) => p.classList.toggle("activo", Number(p.dataset.indice) === indice));
+    info.querySelector("h3").textContent = m.nombre;
+    info.querySelector("p").textContent = m.texto;
+  };
+
+  puntos.forEach((p) => {
+    const indice = Number(p.dataset.indice);
+    p.addEventListener("mouseenter", () => mostrar(indice));
+    p.addEventListener("click", () => mostrar(indice));
+    p.addEventListener("focus", () => mostrar(indice));
   });
 }
