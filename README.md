@@ -13,8 +13,11 @@
 
 ## ✨ Qué es esto
 
-Una página web **enrutada (SPA)** hecha con HTML, CSS y JavaScript puros — sin frameworks,
-sin build, sin dependencias. Se abre con doble clic y se publica gratis en GitHub Pages.
+Una página web **enrutada (SPA)** hecha con HTML, CSS y JavaScript puros — sin build ni
+dependencias de npm. Las animaciones corren con **GSAP + ScrollTrigger** (vía CDN): entrada
+cinematográfica del héroe, parallax del video de fondo, reveals al hacer scroll y bandas de
+fotos con deriva. Si GSAP no carga (o el usuario prefiere menos movimiento), el sitio cae a
+un fallback con CSS puro. Se abre con doble clic y se publica gratis en GitHub Pages.
 
 La identidad visual sale del propio logo de la escuela: paleta negra con los colores de la
 bandera tailandesa (`#A51931` rojo · `#2D2A4A` azul marino) y dorado para los valores,
@@ -87,6 +90,16 @@ También existe `assets/logo-transparente.svg` (sin fondo) para usar sobre secci
     ├── galeria/              # ← deja aquí las fotos de la galería
     └── ...
 ```
+
+## 📷 Fotos y videos (importante)
+
+Las fotografías de `assets/fotos/` y los videos de `assets/videos/` son **material
+referencial de banco libre** ([Pexels](https://www.pexels.com/license/), uso comercial
+gratuito) para que el sitio no nazca vacío. Autores: RDNE, Glebkrs, Tima Miroshnichenko,
+Davner Ribeiro, Franco Monsalvo, Mateusz Turbinski, Coco Championship y Bruno Gobo Foto.
+
+**Cuando tengan fotos y videos reales de la escuela**: reemplacen los archivos (o agreguen
+nuevos) y actualicen las rutas en `js/datos.js` (`galeria`, `videoHero`, `videoClases`).
 
 ## 🥊 Sobre la escuela
 
