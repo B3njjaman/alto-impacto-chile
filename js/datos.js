@@ -38,4 +38,10 @@ const DATOS = {
   // Deja fotos en assets/galeria/ y agrégalas aquí, por ejemplo:
   // { archivo: "assets/galeria/entrenamiento-01.jpg", alt: "Trabajo de pads en clase" },
   galeria: [],
+
+  // --- Testimonios ---------------------------------------------
+  // Reseñas reales de alumnos. La sección solo aparece en el sitio
+  // cuando hay al menos un testimonio cargado aquí. Ejemplo:
+  // { nombre: "Nombre Apellido", texto: "Lo que dijo el alumno.", estrellas: 5 },
+  testimonios: [],
 };

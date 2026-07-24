@@ -40,6 +40,57 @@ function llamadoFinal() {
   </section>`;
 }
 
+// Franja de confianza bajo el llamado a la acción principal: responde
+// de inmediato a las dudas más comunes de quien nunca ha entrenado.
+function franjaConfianza() {
+  const items = ["Sin experiencia previa", "A tu propio ritmo", "Comunidad y respeto ante todo"];
+  return `
+  <ul class="confianza reveal">
+    ${items.map(i => `<li>${i}</li>`).join("")}
+  </ul>`;
+}
+
+// Testimonios: la sección solo se dibuja si hay reseñas reales
+// cargadas en DATOS.testimonios (ver js/datos.js).
+function testimonios() {
+  if (!DATOS.testimonios || DATOS.testimonios.length === 0) return "";
+  return `
+  <section class="seccion">
+    <p class="eyebrow reveal">Lo que dicen nuestros alumnos</p>
+    <h2 class="reveal">Historias reales, resultados reales</h2>
+    <div class="testimonios-grid" style="margin-top:2rem">
+      ${DATOS.testimonios.map(t => `
+      <figure class="testimonio reveal">
+        <div class="testimonio-estrellas" aria-hidden="true">${"★".repeat(t.estrellas || 5)}</div>
+        <blockquote>${t.texto}</blockquote>
+        <figcaption>${t.nombre}</figcaption>
+      </figure>`).join("")}
+    </div>
+  </section>`;
+}
+
+// Preguntas frecuentes de un futuro alumno, con las respuestas que
+// ya usamos en el resto del sitio (clases, misión, contacto).
+function preguntasFrecuentes() {
+  const preguntas = [
+    { q: "¿Necesito experiencia previa?", r: "No. La clase de Iniciación está pensada para quienes parten de cero: postura, golpes básicos y acondicionamiento, en un ambiente seguro y cercano." },
+    { q: "¿Qué debo llevar a mi primera clase?", r: "Ropa deportiva cómoda, botella de agua y toalla. El resto del equipo se conversa al llegar." },
+    { q: "¿Cómo agendo mi clase de prueba?", r: "Escríbenos por Instagram y coordinamos contigo el mejor horario para empezar." },
+  ];
+  return `
+  <section class="seccion">
+    <p class="eyebrow reveal">Antes de empezar</p>
+    <h2 class="reveal">Preguntas frecuentes</h2>
+    <div class="faq reveal" style="margin-top:2rem">
+      ${preguntas.map(p => `
+      <details>
+        <summary>${p.q}</summary>
+        <p>${p.r}</p>
+      </details>`).join("")}
+    </div>
+  </section>`;
+}
+
 const VISTAS = {
 
   // ---------- INICIO ----------
@@ -56,6 +107,7 @@ const VISTAS = {
           <a class="boton boton-rojo" href="#/contacto">Agenda tu clase de prueba</a>
           <a class="boton boton-borde" href="#/nosotros">Conoce la escuela</a>
         </div>
+        ${franjaConfianza()}
       </div>
     </section>
 
@@ -124,6 +176,12 @@ const VISTAS = {
         ${DATOS.instagram.posts.map(p => embedInstagram(p)).join("")}
       </div>
     </section>
+
+    ${testimonios()}
+
+    ${cintaThai()}
+
+    ${preguntasFrecuentes()}
 
     ${llamadoFinal()}
     `,
