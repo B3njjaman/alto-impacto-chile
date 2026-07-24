@@ -40,9 +40,14 @@ lo que pongas en `video` dentro de **`js/datos.js`**:
 |---|---|
 | `archivo: "assets/video/entrenamiento.mp4"` | El video en bucle, sin sonido, como fondo en movimiento |
 | `youtube: "ID_DEL_VIDEO"` | La portada del video; el reproductor se carga recién al pulsar play, así la página no arrastra el peso de YouTube desde el inicio |
-| Ambos vacíos (por defecto) | El panel **arte de los ocho miembros**: las cuatro armas con sus cifras animadas |
+| Ambos vacíos (por defecto) | El panel **arte de los ocho miembros**: las cuatro armas con sus cifras y un diagrama animado |
 
 Así la sección nunca se ve vacía, tengas o no material grabado.
+
+El diagrama del panel se genera en `js/vistas.js` calculando las posiciones (nada de
+coordenadas escritas a mano): ocho marcas repartidas en el anillo y unidas de dos en dos por
+el centro, o sea los cuatro pares de armas. GSAP dibuja los anillos recorriendo su perímetro
+y después lo deja vivo, con el anillo punteado girando y un pulso que recorre los ocho puntos.
 
 ## 🎬 Librerías dinámicas
 
@@ -51,7 +56,7 @@ Se cargan por CDN desde `index.html` y las orquesta **`js/animaciones.js`**:
 | Librería | Para qué |
 |---|---|
 | [Lenis](https://github.com/darkroomengineering/lenis) | Scroll suave con inercia |
-| [GSAP](https://gsap.com/) + ScrollTrigger | Secuencia de entrada del héroe, apariciones por scroll, parallax del logo, bandas de impacto, ticker que acelera con la velocidad del scroll y cifras que cuentan hacia arriba |
+| [GSAP](https://gsap.com/) + ScrollTrigger | Secuencia de entrada del héroe, apariciones por scroll, parallax del logo, bandas de impacto, ticker que acelera con la velocidad del scroll, cifras que cuentan hacia arriba, inclinación de las tarjetas según el puntero y el diagrama de los ocho puntos |
 | [Swiper](https://swiperjs.com/) | Carrusel de los 7 valores |
 
 Todo es **opcional por diseño**: ningún elemento nace invisible desde el CSS. El estado

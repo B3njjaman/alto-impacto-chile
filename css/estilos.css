@@ -382,29 +382,37 @@ h1, h2, h3 {
 
 /* ---------- Ticker rojo ---------- */
 
+/* Banda apagada: texto en contorno sobre fondo oscuro, sin bloque de
+   color. La velocidad la maneja GSAP según el scroll. */
 .ticker {
   overflow: hidden;
-  /* Rojo de bandera, más apagado: viene justo debajo de la portada. */
-  background: var(--rojo);
-  color: var(--hueso);
-  padding: 0.85rem 0;
+  background: var(--carbon);
+  border-top: 1px solid var(--borde);
+  border-bottom: 1px solid var(--borde);
+  padding: 1rem 0;
   white-space: nowrap;
-  border-top: 1px solid rgba(0, 0, 0, 0.2);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
 }
 .ticker-pista {
   display: inline-block;
   animation: desplazar 42s linear infinite;
 }
 .ticker span {
-  font-family: var(--fuente-condensada);
+  font-family: var(--fuente-display);
   font-weight: 700;
+  font-style: italic;
   text-transform: uppercase;
-  font-size: 0.92rem;
-  letter-spacing: 0.2em;
-  padding: 0 0.9rem;
+  font-size: 1.3rem;
+  letter-spacing: 0.03em;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(143, 143, 152, 0.6);
+  padding: 0 0.7rem;
 }
-.ticker span.marca-separador { color: rgba(255, 255, 255, 0.55); }
+.ticker span.marca-separador {
+  color: var(--oro);
+  -webkit-text-stroke: 0;
+  font-size: 0.9rem;
+  vertical-align: 0.32em;
+}
 @keyframes desplazar {
   from { transform: translateX(0); }
   to { transform: translateX(-50%); }
@@ -518,15 +526,6 @@ h1, h2, h3 {
     radial-gradient(ellipse 60% 70% at 82% 50%, rgba(165, 25, 49, 0.13), transparent 70%),
     var(--carbon);
 }
-.ocho-logo {
-  position: absolute;
-  right: -4%;
-  top: 50%;
-  transform: translateY(-50%);
-  width: min(46%, 460px);
-  opacity: 0.13;
-  pointer-events: none;
-}
 /* El canal va aquí, no en .ocho, para que el texto quede alineado
    con el de las secciones normales. */
 .ocho-interior {
@@ -536,6 +535,10 @@ h1, h2, h3 {
   margin: 0 auto;
   width: 100%;
   padding-inline: var(--canal);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: clamp(2rem, 5vw, 4rem);
+  align-items: center;
 }
 .ocho-titulo {
   font-size: clamp(1.5rem, 3.4vw, 2.5rem);
@@ -598,10 +601,71 @@ h1, h2, h3 {
   margin-right: 0.2rem;
 }
 
+/* ---------- Diagrama de los ocho puntos ----------
+   La imagen del panel. GSAP dibuja los anillos, reparte los puntos y
+   deja un pulso girando (ver animarDiagrama en js/animaciones.js). */
+
+.diagrama {
+  width: clamp(230px, 25vw, 340px);
+  height: auto;
+  overflow: visible;
+}
+
+.diagrama-anillo,
+.diagrama-anillo-giro {
+  fill: none;
+  stroke: rgba(242, 239, 232, 0.16);
+  stroke-width: 1;
+}
+.diagrama-anillo-giro {
+  stroke: rgba(201, 162, 75, 0.35);
+  stroke-dasharray: 3 12;
+}
+
+.diagrama-par {
+  stroke: rgba(242, 239, 232, 0.14);
+  stroke-width: 1;
+}
+
+.diagrama-punto {
+  fill: var(--rojo-vivo);
+}
+
+.diagrama-nucleo {
+  fill: var(--negro);
+  stroke: rgba(242, 239, 232, 0.18);
+  stroke-width: 1;
+}
+
+.diagrama-cifra,
+.diagrama-pie {
+  text-anchor: middle;
+  fill: var(--hueso);
+}
+.diagrama-cifra {
+  font-family: var(--fuente-display);
+  font-weight: 700;
+  font-style: italic;
+  font-size: 44px;
+}
+.diagrama-pie {
+  font-family: var(--fuente-condensada);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  fill: var(--gris);
+}
+
+@media (max-width: 980px) {
+  .ocho-interior { grid-template-columns: 1fr; justify-items: center; }
+  .ocho-texto { width: 100%; }
+  .diagrama { width: min(300px, 72vw); }
+}
+
 @media (max-width: 780px) {
   .destacado--media { height: clamp(300px, 62vw, 460px); }
   .ocho-armas { grid-template-columns: repeat(2, 1fr); }
-  .ocho-logo { width: 82%; right: -20%; opacity: 0.07; }
   .destacado-pie { padding-block: 1.4rem; }
   .destacado-pie h2 { max-width: 100%; }
 }
@@ -786,7 +850,7 @@ h1, h2, h3 {
   background: var(--carbon);
   border: 1px solid var(--borde);
   padding: 2rem 1.6rem;
-  transition: border-color 0.25s, transform 0.25s;
+  transition: border-color 0.25s;
 }
 .valor:hover { border-color: var(--oro); }
 .valor .estrella { color: var(--oro); font-size: 1.15rem; line-height: 1; }

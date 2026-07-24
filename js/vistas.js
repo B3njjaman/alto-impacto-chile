@@ -94,25 +94,66 @@ const OCHO_ARMAS = [
   { nombre: "Piernas", cantidad: 2 },
 ];
 
+// Diagrama de los ocho puntos de contacto: ocho marcas en el anillo
+// unidas de dos en dos por el centro, o sea cuatro pares. Las
+// posiciones se calculan aquí para no escribir coordenadas a mano.
+function diagramaOchoPuntos() {
+  const centro = 210;
+  const radio = 132;
+
+  const marcas = Array.from({ length: 8 }, (_, i) => {
+    const angulo = (-90 + i * 45) * (Math.PI / 180);
+    return {
+      x: +(centro + radio * Math.cos(angulo)).toFixed(1),
+      y: +(centro + radio * Math.sin(angulo)).toFixed(1),
+    };
+  });
+
+  const pares = [0, 1, 2, 3]
+    .map((i) => {
+      const a = marcas[i];
+      const b = marcas[i + 4];
+      return `<line class="diagrama-par" x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}"/>`;
+    })
+    .join("");
+
+  const puntos = marcas
+    .map((m) => `<circle class="diagrama-punto" cx="${m.x}" cy="${m.y}" r="7"/>`)
+    .join("");
+
+  return `
+  <svg class="diagrama" viewBox="0 0 420 420" role="img"
+    aria-label="Diagrama de los ocho puntos de contacto del Muay Thai, agrupados en cuatro pares">
+    <circle class="diagrama-anillo" cx="210" cy="210" r="176"/>
+    <circle class="diagrama-anillo-giro" cx="210" cy="210" r="156"/>
+    <g class="diagrama-pares">${pares}</g>
+    <g class="diagrama-puntos">${puntos}</g>
+    <circle class="diagrama-nucleo" cx="210" cy="210" r="48"/>
+    <text class="diagrama-cifra" x="210" y="205" data-contador="8">8</text>
+    <text class="diagrama-pie" x="210" y="232">Miembros</text>
+  </svg>`;
+}
+
 function panelOchoMiembros() {
   return `
   <div class="ocho">
-    <img class="ocho-logo" src="assets/logo-transparente.svg" alt="" />
     <div class="ocho-interior">
-      <p class="eyebrow">Highlight</p>
-      <h2 class="ocho-titulo">El arte de los ocho miembros</h2>
-      <dl class="ocho-armas">
-        ${OCHO_ARMAS.map(a => `
-        <div class="ocho-arma">
-          <dt>${a.nombre}</dt>
-          <dd><span data-contador="${a.cantidad}">${a.cantidad}</span><small>armas</small></dd>
-        </div>`).join("")}
-      </dl>
-      <p class="ocho-total">
-        <strong data-contador="8">8</strong>
-        puntos de contacto: puños, codos, rodillas y piernas. Eso es lo que
-        se entrena en cada clase, paso a paso y sin apuro.
-      </p>
+      <div class="ocho-texto">
+        <h2 class="ocho-titulo">El arte de los ocho miembros</h2>
+        <dl class="ocho-armas">
+          ${OCHO_ARMAS.map(a => `
+          <div class="ocho-arma">
+            <dt>${a.nombre}</dt>
+            <dd><span data-contador="${a.cantidad}">${a.cantidad}</span><small>armas</small></dd>
+          </div>`).join("")}
+        </dl>
+        <p class="ocho-total">
+          <strong data-contador="8">8</strong>
+          puntos de contacto: puños, codos, rodillas y piernas. Eso es lo que
+          se entrena en cada clase, paso a paso y sin apuro.
+        </p>
+      </div>
+      ${diagramaOchoPuntos()}
     </div>
   </div>`;
 }
@@ -134,10 +175,7 @@ function bloqueDestacado() {
   const pie = `
     <div class="destacado-velo"></div>
     <div class="destacado-pie">
-      <div>
-        <p class="eyebrow">Highlight</p>
-        <h2>${titulo}</h2>
-      </div>
+      <h2>${titulo}</h2>
       <a class="boton boton-rojo" href="#/clases">Ver las clases</a>
     </div>`;
 
@@ -164,10 +202,7 @@ function bloqueDestacado() {
       </span>
     </button>
     <div class="destacado-pie">
-      <div>
-        <p class="eyebrow">Highlight</p>
-        <h2>${titulo}</h2>
-      </div>
+      <h2>${titulo}</h2>
       <a class="boton boton-rojo" href="#/clases">Ver las clases</a>
     </div>
   </section>`;

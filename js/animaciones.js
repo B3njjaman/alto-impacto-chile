@@ -221,7 +221,7 @@ const ANIM = (() => {
     );
 
     const piezas = bloque.querySelectorAll(
-      ".ocho .eyebrow, .ocho-titulo, .ocho-arma, .ocho-total, .destacado-pie > *"
+      ".ocho-titulo, .ocho-arma, .ocho-total, .destacado-pie > *"
     );
     if (piezas.length) {
       gsap.set(piezas, { opacity: 0, y: 24 });
@@ -235,14 +235,104 @@ const ANIM = (() => {
       });
     }
 
-    const logo = bloque.querySelector(".ocho-logo");
-    if (logo) {
-      gsap.to(logo, {
-        yPercent: -12,
-        ease: "none",
-        scrollTrigger: { trigger: bloque, start: "top bottom", end: "bottom top", scrub: true },
+    animarDiagrama(bloque);
+  }
+
+  // --- Diagrama de los ocho puntos ---------------------------
+  // Se dibuja al entrar en pantalla y después queda vivo: el anillo
+  // punteado gira despacio y un pulso recorre los ocho puntos.
+  function animarDiagrama(bloque) {
+    const svg = bloque.querySelector(".diagrama");
+    if (!svg) return;
+
+    const anillos = svg.querySelectorAll(".diagrama-anillo, .diagrama-anillo-giro");
+    const pares = svg.querySelectorAll(".diagrama-par");
+    const puntos = svg.querySelectorAll(".diagrama-punto");
+    const nucleo = svg.querySelector(".diagrama-nucleo");
+    const textos = svg.querySelectorAll(".diagrama-cifra, .diagrama-pie");
+
+    // Los anillos se dibujan recorriendo su propio perímetro.
+    anillos.forEach((anillo) => {
+      const largo = anillo.getTotalLength();
+      gsap.set(anillo, { strokeDasharray: largo, strokeDashoffset: largo });
+    });
+
+    const trazo = gsap.timeline({
+      scrollTrigger: { trigger: bloque, start: "top 80%", once: true },
+    });
+
+    trazo
+      .to(anillos, {
+        strokeDashoffset: 0,
+        duration: 1.4,
+        ease: "power2.inOut",
+        stagger: 0.15,
+        // El anillo punteado recupera su patrón al terminar el trazo.
+        onComplete: () => gsap.set(svg.querySelector(".diagrama-anillo-giro"), { clearProps: "strokeDasharray,strokeDashoffset" }),
+      })
+      // svgOrigin, no transformOrigin: en SVG el segundo se mide sobre
+      // la caja del propio elemento, y aquí el pivote es el centro del
+      // dibujo, por donde pasan todos los pares.
+      .from(pares, { scale: 0, svgOrigin: "210 210", duration: 0.8, ease: "power3.out", stagger: 0.1 }, 0.5)
+      .from(puntos, { attr: { r: 0 }, duration: 0.6, ease: "back.out(2.5)", stagger: 0.07 }, 0.9)
+      .from(nucleo, { attr: { r: 0 }, duration: 0.7, ease: "back.out(1.8)" }, 1.1)
+      .from(textos, { opacity: 0, duration: 0.6, stagger: 0.1 }, 1.4);
+
+    // Giro continuo del anillo punteado.
+    const giro = gsap.to(svg.querySelector(".diagrama-anillo-giro"), {
+      rotation: 360,
+      svgOrigin: "210 210",
+      duration: 70,
+      ease: "none",
+      repeat: -1,
+    });
+
+    // Pulso que recorre los ocho puntos, uno tras otro.
+    const pulso = gsap.timeline({ repeat: -1, repeatDelay: 0.8, delay: 2 });
+    puntos.forEach((punto, i) => {
+      pulso.to(punto, {
+        attr: { r: 12 },
+        duration: 0.3,
+        ease: "sine.inOut",
+        yoyo: true,
+        repeat: 1,
+      }, i * 0.15);
+    });
+
+    limpiezas.push(() => { giro.kill(); pulso.kill(); });
+  }
+
+  // --- Tarjetas: inclinación que sigue al puntero -------------
+  // Solo con puntero fino (ratón). En táctil no aporta y estorba.
+  function animarTarjetas() {
+    if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+
+    gsap.utils.toArray(".programa, .contacto-tarjeta, .acceso").forEach((tarjeta) => {
+      const girarY = gsap.quickTo(tarjeta, "rotationY", { duration: 0.6, ease: "power3.out" });
+      const girarX = gsap.quickTo(tarjeta, "rotationX", { duration: 0.6, ease: "power3.out" });
+      const subir = gsap.quickTo(tarjeta, "y", { duration: 0.45, ease: "power3.out" });
+
+      const entrar = () => {
+        gsap.set(tarjeta, { transformPerspective: 900, transformOrigin: "center" });
+        subir(-7);
+      };
+      const mover = (e) => {
+        const caja = tarjeta.getBoundingClientRect();
+        girarY(((e.clientX - caja.left) / caja.width - 0.5) * 7);
+        girarX((0.5 - (e.clientY - caja.top) / caja.height) * 7);
+      };
+      const salir = () => { girarX(0); girarY(0); subir(0); };
+
+      tarjeta.addEventListener("pointerenter", entrar);
+      tarjeta.addEventListener("pointermove", mover);
+      tarjeta.addEventListener("pointerleave", salir);
+
+      limpiezas.push(() => {
+        tarjeta.removeEventListener("pointerenter", entrar);
+        tarjeta.removeEventListener("pointermove", mover);
+        tarjeta.removeEventListener("pointerleave", salir);
       });
-    }
+    });
   }
 
   // --- Cifras que cuentan hacia arriba ------------------------
@@ -299,6 +389,7 @@ const ANIM = (() => {
     animarBandas();
     animarTicker();
     animarDestacado();
+    animarTarjetas();
     animarContadores();
     ScrollTrigger.refresh();
   }
