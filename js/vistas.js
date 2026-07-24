@@ -95,236 +95,71 @@ const OCHO_ARMAS = [
 ];
 
 // ---------- Figura de los ocho miembros ----------
-// Luchador dibujado en vector plano, en el lenguaje del logo: cuerpo
-// en hueso, short rojo de la bandera, guantes oscuros. El esqueleto
-// está en ESQUELETO y de ahí salen tanto los contornos de las
-// extremidades como las marcas, así que cada punto cae exactamente
-// sobre su articulación. Mover una junta mueve las dos cosas.
+// La silueta no está dibujada a mano: sale de vectorizar la foto de
+// referencia. El fondo de esa foto es frío (azulado) y la piel es
+// cálida incluso en sombra, así que la separación se hace por
+// temperatura de color y no por luminancia —con luminancia el guante
+// y el lado oscuro del torso caen en el mismo nivel que el fondo—.
+// Después se cierran los huecos, se traza el contorno y se simplifica.
 //
-// Las extremidades no son trazos de grosor fijo: se generan como
-// contornos que se estrechan en las articulaciones y engordan en el
-// vientre del músculo. Un tubo uniforme siempre se lee a maniquí.
+// Sobre esa base van las prendas en los colores secundarios de la
+// paleta: short y guantes en azul de bandera, mongkhon en dorado.
 
-const ESQUELETO = {
-  craneo: { x: 152, y: 68 },
-  menton: { x: 150, y: 102 },
-  cuello: { x: 158, y: 120 },
+const SILUETA_CUERPO = "M126 0 Q153 0 149.5 2 Q146 4 151 9 Q156 14 155 17.5 Q154 21 150 22.5 Q146 24 139.5 30.5 Q133 37 137 45.5 Q141 54 140.5 58 Q140 62 143.5 65.5 Q147 69 150.5 69 Q154 69 157.5 65.5 Q161 62 161.5 58.5 Q162 55 167.5 63 Q173 71 182.5 80.5 Q192 90 203.5 81 Q215 72 221 76 Q227 80 229.5 77.5 Q232 75 233 76 Q234 77 227.5 88.5 Q221 100 214.5 107 Q208 114 215 120 Q222 126 228 124 Q234 122 237 124.5 Q240 127 255.5 113.5 Q271 100 291 91 Q311 82 320 82 Q329 82 333.5 87.5 Q338 93 337.5 114.5 Q337 136 334 150 Q331 164 331.5 176 Q332 188 334.5 199 Q337 210 345.5 228.5 Q354 247 350.5 248.5 Q347 250 333 236 Q319 222 313.5 220.5 Q308 219 304.5 216 Q301 213 301 210 Q301 207 304.5 200.5 Q308 194 308 179 Q308 164 307 158.5 Q306 153 302 149 Q298 145 293.5 149.5 Q289 154 284.5 162.5 Q280 171 275 172 Q270 173 258 184 Q246 195 244 198.5 Q242 202 241 215 Q240 228 242 232.5 Q244 237 240.5 241 Q237 245 235 254 Q233 263 231 266 Q229 269 229 278.5 Q229 288 226 293.5 Q223 299 224 301.5 Q225 304 217.5 320.5 Q210 337 211.5 340.5 Q213 344 208.5 350 Q204 356 204 359.5 Q204 363 205.5 364.5 Q207 366 205 370 Q203 374 202.5 383.5 Q202 393 204 403 Q206 413 208.5 416 Q211 419 216.5 420 Q222 421 196.5 421 Q171 421 177 418 Q183 415 182.5 411.5 Q182 408 184 402.5 Q186 397 184.5 368.5 Q183 340 184.5 333.5 Q186 327 190.5 318 Q195 309 196 301 Q197 293 197 286 Q197 279 193 258 Q189 237 189 228 Q189 219 179.5 212 Q170 205 170.5 199.5 Q171 194 172.5 192 Q174 190 170.5 186.5 Q167 183 149 175 Q131 167 121.5 160.5 Q112 154 97.5 141.5 Q83 129 75.5 117 Q68 105 67.5 101 Q67 97 68.5 93 Q70 89 81.5 78 Q93 67 95 62.5 Q97 58 97.5 39.5 Q98 21 102 12.5 Q106 4 102.5 2 Z";
 
-  // Eje del torso: hombros, pecho, cintura y pelvis
-  esternon: { x: 162, y: 150 },
-  cintura: { x: 168, y: 206 },
-  pelvis: { x: 174, y: 236 },
+const SILUETA_SHORT = "M272 116 Q277 128 278.5 147 Q280 166 268.5 173.5 Q257 181 253 177.5 Q249 174 244 179 Q239 184 234 191 Q229 198 232.5 202 Q236 206 229 222 Q222 238 228 243 Q234 248 233.5 250 Q233 252 225 264.5 Q217 277 212.5 277 Q208 277 205.5 274.5 Q203 272 201 274 Q199 276 195 260.5 Q191 245 190.5 232 Q190 219 180 211 Q170 203 173 196.5 Q176 190 173.5 186 Q171 182 184.5 170 Q198 158 207 140.5 Q216 123 219.5 125 Q223 127 228.5 125 Q234 123 236.5 125.5 Q239 128 253 116 Z";
 
-  // Brazos en guardia. Escalonados: una mano a la altura del mentón y
-  // la otra más arriba. A la misma altura los dos guantes enmarcan la
-  // cara y el conjunto se lee como un par de ojos.
-  hombroIzq: { x: 124, y: 142 },
-  codoIzq: { x: 96, y: 182 },
-  munecaIzq: { x: 114, y: 108 },
-  hombroDer: { x: 200, y: 134 },
-  codoDer: { x: 240, y: 160 },
-  munecaDer: { x: 202, y: 92 },
-
-  // Piernas: la de apoyo plantada, la otra sube a golpear
-  caderaIzq: { x: 154, y: 240 },
-  rodillaApoyo: { x: 148, y: 354 },
-  tobilloApoyo: { x: 144, y: 452 },
-  caderaDer: { x: 194, y: 230 },
-  rodillaGolpe: { x: 304, y: 202 },
-  tobilloGolpe: { x: 354, y: 310 },
-};
-
-// --- Utilidades de geometría --------------------------------
-const f = (n) => Math.round(n * 10) / 10;
-
-function medio(a, b, t = 0.5) {
-  return { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t };
-}
-
-// Punto a cierta distancia de `a` en dirección a `b`, para sacar el
-// centro del guante más allá de la muñeca.
-function alargar(a, b, distancia) {
-  const dx = b.x - a.x;
-  const dy = b.y - a.y;
-  const largo = Math.hypot(dx, dy) || 1;
-  return { x: b.x + (dx / largo) * distancia, y: b.y + (dy / largo) * distancia };
-}
-
-// Polilínea suavizada: cada vértice se convierte en el control de una
-// curva que pasa por los puntos medios. Da contornos orgánicos sin
-// tener que escribir curvas a mano.
-function curva(puntos, inicial = "M") {
-  let d = `${inicial}${f(puntos[0].x)} ${f(puntos[0].y)}`;
-  for (let i = 1; i < puntos.length - 1; i++) {
-    const m = medio(puntos[i], puntos[i + 1]);
-    d += ` Q${f(puntos[i].x)} ${f(puntos[i].y)} ${f(m.x)} ${f(m.y)}`;
-  }
-  const ultimo = puntos[puntos.length - 1];
-  return `${d} L${f(ultimo.x)} ${f(ultimo.y)}`;
-}
-
-// Contorno de un miembro: recorre las juntas por un costado con los
-// grosores dados, rodea la punta con un semicírculo, vuelve por el
-// otro costado y cierra con el semicírculo del arranque.
-function miembro(juntas, grosores) {
-  const n = juntas.length;
-
-  const normal = (i) => {
-    const antes = juntas[Math.max(0, i - 1)];
-    const despues = juntas[Math.min(n - 1, i + 1)];
-    const dx = despues.x - antes.x;
-    const dy = despues.y - antes.y;
-    const largo = Math.hypot(dx, dy) || 1;
-    return { x: -dy / largo, y: dx / largo };
-  };
-
-  const costado = (signo) =>
-    juntas.map((p, i) => {
-      const nor = normal(i);
-      return {
-        x: p.x + nor.x * (grosores[i] / 2) * signo,
-        y: p.y + nor.y * (grosores[i] / 2) * signo,
-      };
-    });
-
-  const ida = costado(1);
-  const vuelta = costado(-1).reverse();
-  const rPunta = grosores[n - 1] / 2;
-  const rInicio = grosores[0] / 2;
-
-  // El tramo de vuelta arranca con su propio `L` —una línea de largo
-  // cero sobre el final del arco—. Sin esa letra, las coordenadas
-  // quedarían pegadas a la `A` anterior y SVG las leería como los
-  // parámetros de otro arco, corrompiendo el resto del contorno.
-  // Barrido 0: los semicírculos de las puntas tienen que cerrar la
-  // extremidad hacia afuera. Con barrido 1 muerden hacia adentro y
-  // dejan una mordida cóncava en el hombro y en la cadera.
-  return [
-    curva(ida, "M"),
-    `A${f(rPunta)} ${f(rPunta)} 0 0 0 ${f(vuelta[0].x)} ${f(vuelta[0].y)}`,
-    curva(vuelta, "L"),
-    `A${f(rInicio)} ${f(rInicio)} 0 0 0 ${f(ida[0].x)} ${f(ida[0].y)}`,
-    "Z",
-  ].join(" ");
-}
-
-const GUANTE_IZQ = alargar(ESQUELETO.codoIzq, ESQUELETO.munecaIzq, 15);
-const GUANTE_DER = alargar(ESQUELETO.codoDer, ESQUELETO.munecaDer, 15);
-
-// Guante de Muay Thai: mitón, pulgar y puño de muñeca vendado. Se
-// dibuja en coordenadas locales apuntando hacia arriba y se gira para
-// que siga la línea del antebrazo, así los dos guantes quedan bien
-// orientados sin escribir dos trazados distintos.
-function guante(centro, desde) {
-  const grados = (Math.atan2(centro.y - desde.y, centro.x - desde.x) * 180) / Math.PI + 90;
-  return `
-  <g transform="translate(${f(centro.x)} ${f(centro.y)}) rotate(${f(grados)})">
-    <path class="fig-guante" d="M-15 1 Q-17 -17 -2 -20 Q14 -19 15 -1 Q16 12 3 15 Q-12 16 -15 1 Z"/>
-    <path class="fig-guante" d="M-14 -3 q-9 2 -8 10 q2 8 9 6 z"/>
-    <path class="fig-venda" d="M-12 13 q12 5 24 0 l2 9 q-14 6 -28 0 z"/>
-  </g>`;
-}
-
+// Los ocho puntos de contacto, en coordenadas de la silueta.
 const OCHO_PUNTOS = [
-  { arma: "Puños", ...GUANTE_IZQ },
-  { arma: "Puños", ...GUANTE_DER },
-  { arma: "Codos", ...ESQUELETO.codoIzq },
-  { arma: "Codos", ...ESQUELETO.codoDer },
-  { arma: "Rodillas", ...ESQUELETO.rodillaGolpe },
-  { arma: "Rodillas", ...ESQUELETO.rodillaApoyo },
-  { arma: "Piernas", ...medio(ESQUELETO.rodillaGolpe, ESQUELETO.tobilloGolpe, 0.55) },
-  { arma: "Piernas", ...medio(ESQUELETO.rodillaApoyo, ESQUELETO.tobilloApoyo, 0.55) },
+  { arma: "Puños", x: 150, y: 52 },
+  { arma: "Puños", x: 232, y: 54 },
+  { arma: "Codos", x: 102, y: 100 },
+  { arma: "Codos", x: 228, y: 96 },
+  { arma: "Rodillas", x: 300, y: 152 },
+  { arma: "Rodillas", x: 196, y: 282 },
+  { arma: "Piernas", x: 325, y: 214 },
+  { arma: "Piernas", x: 188, y: 352 },
+];
+
+// Guantes: en la foto son negros y neutros, así que la máscara por
+// temperatura los deja fuera. Se dibujan aparte, que además es lo que
+// permite darles el azul de la paleta.
+const GUANTES = [
+  { x: 150, y: 52 },
+  { x: 232, y: 54 },
 ];
 
 function figuraOchoPuntos() {
-  const e = ESQUELETO;
-
-  // El vientre del gemelo va un poco por fuera del eje del hueso.
-  const gemeloApoyo = { x: e.rodillaApoyo.x - 5, y: medio(e.rodillaApoyo, e.tobilloApoyo, 0.35).y };
-  const gemeloGolpe = medio(e.rodillaGolpe, e.tobilloGolpe, 0.35);
-
-  const piernaApoyo = miembro(
-    [e.caderaIzq, medio(e.caderaIzq, e.rodillaApoyo, 0.45), e.rodillaApoyo, gemeloApoyo, e.tobilloApoyo],
-    [46, 44, 30, 33, 15]
-  );
-  const piernaGolpe = miembro(
-    [e.caderaDer, medio(e.caderaDer, e.rodillaGolpe, 0.45), e.rodillaGolpe, gemeloGolpe, e.tobilloGolpe],
-    [48, 46, 31, 34, 15]
-  );
-  const brazoIzq = miembro(
-    [e.hombroIzq, medio(e.hombroIzq, e.codoIzq, 0.45), e.codoIzq, medio(e.codoIzq, e.munecaIzq, 0.4), e.munecaIzq],
-    [30, 27, 20, 21, 14]
-  );
-  const brazoDer = miembro(
-    [e.hombroDer, medio(e.hombroDer, e.codoDer, 0.45), e.codoDer, medio(e.codoDer, e.munecaDer, 0.4), e.munecaDer],
-    [30, 27, 20, 21, 14]
-  );
-  // El torso va a mano y no con `miembro`: el tapón semicircular de la
-  // punta le pone una cúpula encima de los hombros y se come el
-  // cuello, que es justo lo que delata al maniquí. Aquí el escote
-  // entre los trapecios se dibuja explícito.
-  const torso = `
-    M146 116
-    Q118 126 114 154
-    Q126 174 130 190
-    Q136 214 138 232
-    Q139 253 149 265
-    L201 260
-    Q212 246 209 228
-    Q207 200 201 186
-    Q199 155 195 136
-    Q186 119 173 115
-    Z`.replace(/\s+/g, " ").trim();
-
   return `
   <figure class="ocho-figura">
-    <svg class="ocho-figura-svg" viewBox="66 26 328 462" role="img"
+    <svg class="ocho-figura-svg" viewBox="55 -6 320 434" role="img"
       aria-label="Luchador de Muay Thai lanzando una rodilla, con los ocho puntos de contacto señalados sobre el cuerpo">
 
-      <!-- Pies: el de apoyo asentado, el que golpea en punta -->
-      <path class="fig-piel" d="M134 442 q-18 8 -22 20 q-3 10 8 11 l50 0 q11 -1 9 -11 q-3 -12 -22 -19 z"/>
-      <path class="fig-piel" d="M340 300 q26 12 44 36 q7 10 -3 16 q-11 5 -18 -5 q-13 -19 -33 -29 z"/>
+      <path class="fig-piel" d="${SILUETA_CUERPO}"/>
+      <path class="fig-short" d="${SILUETA_SHORT}"/>
 
-      <!-- Cuello, detrás de todo: asoma en el escote del torso -->
-      <path class="fig-piel" d="M145 88 L173 86 L176 126 L147 128 Z"/>
+      <!-- Al cerrar la máscara para tapar el hueco de los guantes, la
+           cabeza quedó pegada al brazo levantado. Este corte en el
+           color del fondo vuelve a separarlas. -->
+      <path class="fig-corte" d="M156 6 Q168 38 150 74"/>
 
-      <!-- Piernas y brazos, detrás del torso -->
-      <path class="fig-piel" d="${piernaApoyo}"/>
-      <path class="fig-piel" d="${piernaGolpe}"/>
-      <path class="fig-piel" d="${brazoIzq}"/>
-      <path class="fig-piel" d="${brazoDer}"/>
+      <!-- Mongkhon: la diadema ritual que el luchador lleva al entrar
+           al ring. Va en dorado, el otro color secundario. -->
+      <path class="fig-mongkhon" d="M92 40 Q122 18 156 32 L154 45 Q122 32 94 53 Z"/>
+      <path class="fig-mongkhon-cinta" d="M95 50 Q86 64 90 80"/>
 
-      <!-- Torso -->
-      <path class="fig-piel" d="${torso}"/>
+      ${GUANTES.map(g => `
+      <g transform="translate(${g.x} ${g.y})">
+        <path class="fig-guante" d="M-19 2 Q-21 -20 -3 -23 Q17 -22 18 -1 Q19 15 4 18 Q-15 19 -19 2 Z"/>
+        <path class="fig-guante" d="M-18 -4 q-10 3 -9 12 q2 9 10 7 z"/>
+        <path class="fig-venda" d="M-14 16 q14 6 28 0 l2 10 q-16 7 -33 0 z"/>
+      </g>`).join("")}
 
-      <!-- Cabeza: cráneo, sien y mandíbula hasta el mentón -->
-      <path class="fig-piel" d="M132 62 Q131 35 154 34 Q177 35 178 62 Q179 78 172 89 Q163 101 151 97 Q137 88 132 62 Z"/>
-
-      <!-- Cortes de sombra: lo que separa un cuerpo de una silueta -->
-      <g class="fig-sombra">
-        <path d="M138 62 Q142 84 154 94"/>
-        <path d="M132 154 Q158 172 187 160"/>
-        <path d="M162 176 L166 212"/>
-        <path d="M122 146 Q134 161 133 178"/>
-        <path d="M198 142 Q190 157 192 174"/>
-        <path d="M137 348 Q149 357 160 349"/>
-        <path d="M292 198 Q304 210 317 199"/>
-        <path d="M133 382 Q139 402 137 420"/>
-      </g>
-
-      <!-- Short: la prenda que trae el rojo del logo -->
-      <path class="fig-short" d="M140 216 Q168 208 202 212 Q244 218 258 232 L250 258 Q214 240 198 244 L192 276 Q166 284 142 276 Q134 244 140 216 Z"/>
-
-      <!-- Guantes -->
-      ${guante(GUANTE_IZQ, ESQUELETO.codoIzq)}
-      ${guante(GUANTE_DER, ESQUELETO.codoDer)}
-
-      <!-- Las ocho marcas, colocadas desde el mismo esqueleto -->
       <g class="ocho-marcas">
         ${OCHO_PUNTOS.map(p => `
         <g class="ocho-marca" data-arma="${p.arma}">
-          <circle class="ocho-marca-halo" cx="${f(p.x)}" cy="${f(p.y)}" r="7"/>
-          <circle class="ocho-marca-punto" cx="${f(p.x)}" cy="${f(p.y)}" r="7"/>
+          <circle class="ocho-marca-halo" cx="${p.x}" cy="${p.y}" r="7"/>
+          <circle class="ocho-marca-punto" cx="${p.x}" cy="${p.y}" r="7"/>
         </g>`).join("")}
       </g>
     </svg>

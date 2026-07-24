@@ -622,25 +622,19 @@ h1, h2, h3 {
    guantes oscuros: los mismos colores del logo. */
 .fig-piel { fill: var(--hueso); }
 
-/* Los cortes son lo que separa un cuerpo de una silueta: sugieren
-   pectoral, abdomen, deltoides y rótulas sin dibujar músculos. */
-.fig-sombra {
-  fill: none;
-  stroke: #c4beb1;
-  stroke-width: 2.4;
-  stroke-linecap: round;
-  opacity: 0.9;
-}
-
-.fig-short { fill: var(--rojo); }
-
-.fig-guante {
-  fill: var(--negro);
-  stroke: var(--hueso);
-  stroke-width: 3;
-  stroke-linejoin: round;
-}
+/* Las prendas van en los colores secundarios de la paleta: azul de
+   la bandera para short y guantes, dorado para el mongkhon. */
+.fig-short { fill: var(--azul); }
+.fig-guante { fill: var(--azul); }
 .fig-venda { fill: var(--hueso); }
+.fig-corte {
+  fill: none;
+  stroke: var(--carbon);
+  stroke-width: 5;
+  stroke-linecap: round;
+}
+.fig-mongkhon { fill: var(--oro); }
+.fig-mongkhon-cinta { fill: none; stroke: var(--oro); stroke-width: 4; stroke-linecap: round; }
 
 /* Cada marca escala sobre su propio centro. */
 .ocho-marca {
