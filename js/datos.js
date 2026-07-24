@@ -14,11 +14,6 @@ const DATOS = {
     usuario: "alto_impacto_chile",
     url: "https://www.instagram.com/alto_impacto_chile",
     dm: "https://ig.me/m/alto_impacto_chile",
-    // Permalinks de posts reales para los embeds oficiales de la galería.
-    posts: [
-      "https://www.instagram.com/p/DUHbfZYCTFg/",
-      "https://www.instagram.com/p/DU9fWLCiR69/",
-    ],
   },
   // Escribe el número con código de país, solo dígitos. Ej: "56912345678".
   // Si queda vacío, el sitio usa el DM de Instagram como canal de contacto.

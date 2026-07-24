@@ -33,24 +33,6 @@ function activarReveals() {
   elementos.forEach((el) => observador.observe(el));
 }
 
-// --- Embeds oficiales de Instagram ---------------------------
-// Carga embed.js una sola vez y re-procesa los blockquotes al
-// cambiar de vista.
-let embedCargado = false;
-function procesarEmbedsInstagram() {
-  if (!document.querySelector(".instagram-media")) return;
-  if (window.instgrm && window.instgrm.Embeds) {
-    window.instgrm.Embeds.process();
-    return;
-  }
-  if (embedCargado) return;
-  embedCargado = true;
-  const s = document.createElement("script");
-  s.src = "https://www.instagram.com/embed.js";
-  s.async = true;
-  document.body.appendChild(s);
-}
-
 // --- Datos globales en la interfaz ---------------------------
 document.getElementById("anio").textContent = new Date().getFullYear();
 document.getElementById("pieInstagram").href = DATOS.instagram.url;

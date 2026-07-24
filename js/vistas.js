@@ -22,6 +22,29 @@ function cintaThai() {
   </svg>`;
 }
 
+function iconoInstagram() {
+  return `<svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><path fill="currentColor" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zm0 10.162a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>`;
+}
+
+// Bloque "Síguenos en Instagram": reemplaza los embeds de posts
+// (todavía poco prolijos) por un banner compacto de texto + ícono,
+// sin depender de capturas de publicaciones.
+function bloqueComunidad({ enlaceGaleria = false } = {}) {
+  return `
+  <div class="comunidad reveal">
+    <div class="comunidad-icono" aria-hidden="true">${iconoInstagram()}</div>
+    <div class="comunidad-texto">
+      <p class="eyebrow">Comunidad</p>
+      <h2>Síguenos en Instagram</h2>
+      <p>Entrenamientos, comunidad y el día a día de la escuela — todo primero en @${DATOS.instagram.usuario}.</p>
+    </div>
+    <div class="comunidad-acciones">
+      <a class="boton boton-rojo" href="${DATOS.instagram.url}" target="_blank" rel="noopener">Seguir</a>
+      ${enlaceGaleria ? `<a class="boton boton-borde" href="#/galeria">Ver galería</a>` : ""}
+    </div>
+  </div>`;
+}
+
 function marqueeValores() {
   const items = VALORES.map(v => `<span>${v.nombre}</span><span class="oro">★</span>`).join("");
   return `
@@ -159,22 +182,7 @@ const VISTAS = {
     ${cintaThai()}
 
     <section class="seccion">
-      <div class="seccion-cabeza reveal">
-        <div>
-          <p class="eyebrow">Comunidad</p>
-          <h2>Síguenos en Instagram</h2>
-        </div>
-        <a class="boton boton-borde" href="#/galeria">Ver la galería</a>
-      </div>
-      <div class="galeria-grid">
-        <div class="tarjeta-instagram reveal">
-          <img src="assets/logo.svg" alt="Logo de Alto Impacto Chile" />
-          <strong>@${DATOS.instagram.usuario}</strong>
-          <p>Entrenamientos, comunidad y el día a día de la escuela.</p>
-          <a class="boton boton-rojo" href="${DATOS.instagram.url}" target="_blank" rel="noopener">Seguir</a>
-        </div>
-        ${DATOS.instagram.posts.map(p => embedInstagram(p)).join("")}
-      </div>
+      ${bloqueComunidad({ enlaceGaleria: true })}
     </section>
 
     ${testimonios()}
@@ -330,33 +338,31 @@ const VISTAS = {
   // ---------- GALERÍA ----------
   "/galeria": {
     titulo: "Galería · Alto Impacto Chile",
-    html: () => `
+    html: () => {
+      const hayFotos = DATOS.galeria && DATOS.galeria.length > 0;
+      return `
     <section class="seccion">
-      <div class="seccion-cabeza reveal">
-        <div>
-          <p class="eyebrow">Galería</p>
-          <h2>La escuela en acción</h2>
-        </div>
-        <a class="boton boton-rojo" href="${DATOS.instagram.url}" target="_blank" rel="noopener">Seguir en Instagram</a>
-      </div>
+      <p class="eyebrow reveal">Galería</p>
+      <h2 class="reveal">La escuela en acción</h2>
 
-      <div class="galeria-grid">
+      ${hayFotos ? `
+      <div class="galeria-grid" style="margin-top:2.5rem">
         ${DATOS.galeria.map(f => `
         <figure class="galeria-foto reveal">
           <img src="${f.archivo}" alt="${f.alt}" loading="lazy" />
         </figure>`).join("")}
-        ${DATOS.instagram.posts.map(p => embedInstagram(p)).join("")}
-        <div class="tarjeta-instagram reveal">
-          <img src="assets/logo.svg" alt="Logo de Alto Impacto Chile" />
-          <strong>@${DATOS.instagram.usuario}</strong>
-          <p>Todas las fotos y videos de la escuela están en nuestro Instagram.</p>
-          <a class="boton boton-rojo" href="${DATOS.instagram.url}" target="_blank" rel="noopener">Ver el perfil completo</a>
-        </div>
+      </div>` : `
+      <p class="seccion-intro reveal" style="margin-top:1rem">Todavía estamos construyendo esta galería. Mientras tanto, el día a día de la escuela está en Instagram.</p>
+      `}
+
+      <div style="margin-top:2.5rem">
+        ${bloqueComunidad()}
       </div>
     </section>
 
     ${llamadoFinal()}
-    `,
+    `;
+    },
   },
 
   // ---------- CONTACTO ----------
@@ -408,17 +414,6 @@ const VISTAS = {
     },
   },
 };
-
-// Embed oficial de Instagram: el script embed.js lo hidrata con la foto real.
-function embedInstagram(permalink) {
-  return `
-  <blockquote class="instagram-media reveal" data-instgrm-permalink="${permalink}" data-instgrm-version="14"
-    style="background:#15151a; border:1px solid #26262e; border-radius:10px; max-width:540px; min-width:unset; width:100%;">
-    <a href="${permalink}" target="_blank" rel="noopener" style="display:block; padding:2rem; color:#9a99a1; text-decoration:none; text-align:center;">
-      Ver esta publicación en Instagram
-    </a>
-  </blockquote>`;
-}
 
 // Vista 404
 const VISTA_404 = {

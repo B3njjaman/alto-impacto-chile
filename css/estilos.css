@@ -104,9 +104,9 @@ h1, h2, h3 {
   padding: 0.8rem 1.7rem;
   border: 1px solid transparent;
   border-radius: 3px;
-  transition: background 0.2s, border-color 0.2s, transform 0.15s;
+  transition: background 0.2s, border-color 0.2s, filter 0.15s;
 }
-.boton:active { transform: translateY(1px); }
+.boton:active { filter: brightness(0.85); }
 
 .boton-rojo { background: var(--rojo); color: var(--hueso); }
 .boton-rojo:hover { background: var(--rojo-vivo); }
@@ -491,8 +491,6 @@ table.horario tr:nth-child(even) td { background: var(--carbon-claro); }
   align-items: start;
 }
 
-.galeria-grid .instagram-media { margin: 0 !important; min-width: 0 !important; }
-
 .galeria-foto {
   border-radius: var(--radio);
   overflow: hidden;
@@ -506,26 +504,33 @@ table.horario tr:nth-child(even) td { background: var(--carbon-claro); }
 }
 .galeria-foto:hover img { transform: scale(1.04); }
 
-.tarjeta-instagram {
-  background: linear-gradient(135deg, rgba(165, 25, 49, 0.25), rgba(45, 42, 74, 0.4)), var(--carbon);
+/* ---------- Bloque de comunidad (Instagram) ---------- */
+
+.comunidad {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  background: linear-gradient(120deg, rgba(165, 25, 49, 0.16), rgba(45, 42, 74, 0.28)), var(--carbon);
   border: 1px solid var(--borde);
   border-radius: var(--radio);
-  padding: 2.5rem 2rem;
-  text-align: center;
+  padding: clamp(1.8rem, 4vw, 2.6rem) clamp(1.5rem, 4vw, 3rem);
+}
+.comunidad-icono {
+  flex: none;
+  width: 60px;
+  height: 60px;
+  border-radius: 16px;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  justify-content: center;
+  background: linear-gradient(45deg, #f58529, #dd2a7b, #8134af);
+  color: #fff;
 }
-.tarjeta-instagram img { width: 90px; }
-.tarjeta-instagram strong {
-  font-family: var(--fuente-condensada);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-size: 1rem;
-}
-.tarjeta-instagram p { color: var(--gris); font-size: 0.93rem; font-weight: 300; }
+.comunidad-texto { flex: 1 1 320px; }
+.comunidad-texto h2 { margin: 0.3rem 0 0.5rem; font-size: clamp(1.5rem, 3vw, 2.1rem); }
+.comunidad-texto p { color: var(--gris); font-weight: 300; max-width: 52ch; }
+.comunidad-acciones { display: flex; gap: 0.8rem; flex-wrap: wrap; flex: none; }
 
 /* ---------- Contacto ---------- */
 
