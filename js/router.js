@@ -33,11 +33,16 @@ function renderizar(esCambioDeRuta) {
 
     window.scrollTo({ top: 0, behavior: "instant" });
 
-    activarReveals();
-    activarInteracciones();
+    // Un solo sistema de aparición a la vez: GSAP si está disponible
+    // y el usuario acepta movimiento; si no, el observer simple.
+    if (gsapListo()) {
+      activarInteracciones();
+    } else {
+      activarReveals();
+    }
   };
 
-  const puedeAnimar = window.gsap && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const puedeAnimar = gsapListo();
   if (esCambioDeRuta && puedeAnimar) {
     gsap.to(app, { opacity: 0, y: -10, duration: 0.2, ease: "power1.in", onComplete: dibujar });
   } else {
